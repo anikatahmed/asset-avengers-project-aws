@@ -85,8 +85,24 @@ in each database owner role so `pg_restore --role=OWNER` can create objects with
 the correct ownership. Existing passwords/data are preserved; existing databases
 with a different owner cause an error before any persistent changes. Review those
 databases before explicitly changing ownership. A failure after creation begins
-can leave partial setup; correct the error and rerun. The script does not rotate
+can leave partial setup; correct the error and rerun. Normal mode does not rotate
 existing credentials, drop databases, restore backups, or create application tables.
+
+If an existing target is empty or disposable and you want to replace it before
+restoring, explicitly request reset:
+
+```bash
+bash scripts/create-rds-databases.sh --reset
+```
+
+Type `RESET` at the confirmation prompt. This permanently drops and recreates all
+four configured databases, including any existing data, and disconnects their
+sessions. Stop application writers and verify backups first. Existing login
+passwords and other databases remain unchanged. Reset can resolve the different
+owner error by recreating the target under the configured owner. It is unnecessary
+when you want to preserve existing data: review the current ownership and assign
+the intended owner explicitly instead. Database creation/drop is not atomic across
+all four targets; after a failure, inspect the results before retrying.
 
 For each dump, restore using `--no-owner --no-privileges --exit-on-error` and the
 owner printed by the script as `--role`. Use an empty target, not a database already

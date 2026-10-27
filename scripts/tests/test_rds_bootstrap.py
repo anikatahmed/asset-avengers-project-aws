@@ -14,7 +14,7 @@ SQL = ROOT / 'deployment/rds/create-databases.sql'
 
 def settings():
     return dict(SOURCE_DB_HOST='test.example.rds.amazonaws.com', RDS_ADMIN_USER='postgres',
-                RDS_ADMIN_PASSWORD='fixture-admin-password', POSTGRES_DB='Endgame_Trading',
+                RDS_ADMIN_PASSWORD='fixture-admin-password', RDS_RESET_DATABASES='false', POSTGRES_DB='Endgame_Trading',
                 DB_USERNAME='trading-app', DB_PASSWORD="fixture'quoted$password",
                 AUTH_DB_NAME='auth', AUTH_DB_USER='auth', AUTH_DB_PASSWORD='fixture-auth',
                 ADMIN_DB_NAME='admin_analytics', ADMIN_DB_SUPERUSER='reporting_owner',
@@ -47,6 +47,17 @@ class BootstrapConfigTests(unittest.TestCase):
                                 capture_output=True, text=True)
         self.assertEqual(result.returncode, 0)
         self.assertIn('Does not load schemas', result.stdout)
+
+    def test_reset_cancelled_before_database_connection(self):
+        with tempfile.TemporaryDirectory() as folder:
+            fixture = Path(folder) / '.env'
+            fixture.write_text('SOURCE_DB_HOST=test.example.rds.amazonaws.com\n')
+            result = subprocess.run(['bash', str(ROOT / 'scripts/create-rds-databases.sh'),
+                                     '--reset', str(fixture)], input='no\n',
+                                    capture_output=True, text=True)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn('No connection was made', result.stderr)
+
 
 
 @unittest.skipUnless(os.getenv('RDS_BOOTSTRAP_DOCKER_TEST') == '1', 'Opt-in local Docker test')
@@ -94,6 +105,34 @@ class BootstrapDatabaseTests(unittest.TestCase):
         self.assertEqual(before, self.psql("SELECT rolpassword FROM pg_authid WHERE rolname='trading-app';"))
         self.assertEqual(self.psql('SELECT value FROM preserved_data;').strip(), '42')
         self.assertEqual(self.psql("SELECT pg_has_role('endgame_admin','analytics_admin','MEMBER');").strip(), 't')
+
+    def test_reset_recreates_databases_and_preserves_other_databases_and_passwords(self):
+        result = self.bootstrap()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        before = self.psql("SELECT rolpassword FROM pg_authid WHERE rolname='auth';")
+        # An independently owned old target must be replaceable only in reset mode.
+        self.psql('ALTER DATABASE auth OWNER TO postgres; CREATE DATABASE unrelated;')
+        self.psql('CREATE TABLE unrelated_marker (value int); INSERT INTO unrelated_marker VALUES (42);')
+        subprocess.run(['docker', 'exec', self.name, 'psql', '-U', 'postgres', '-d', 'auth',
+                        '-c', 'CREATE TABLE old_data (value int); INSERT INTO old_data VALUES (1);'],
+                       check=True, capture_output=True)
+        result = self.bootstrap({'RDS_RESET_DATABASES': 'true', 'AUTH_DB_PASSWORD': 'changed-fixture'})
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn('recreated empty', result.stdout)
+        self.assertEqual(before, self.psql("SELECT rolpassword FROM pg_authid WHERE rolname='auth';"))
+        self.assertEqual(self.psql("SELECT pg_get_userbyid(datdba) FROM pg_database WHERE datname='auth';").strip(), 'auth')
+        self.assertEqual(self.psql("SELECT count(*) FROM pg_database WHERE datname='unrelated';").strip(), '1')
+        self.assertEqual(self.psql('SELECT value FROM unrelated_marker;').strip(), '42')
+        check = subprocess.run(['docker', 'exec', self.name, 'psql', '-U', 'postgres', '-d', 'auth',
+                                '-Atc', "SELECT to_regclass('public.old_data') IS NULL;"],
+                               check=True, capture_output=True, text=True)
+        self.assertEqual(check.stdout.strip(), 't')
+
+    def test_reset_rejects_system_database_before_mutation(self):
+        result = self.bootstrap({'RDS_RESET_DATABASES': 'true', 'AUTH_DB_NAME': 'postgres'})
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('cannot be postgres', result.stderr)
+        self.assertEqual(self.psql("SELECT count(*) FROM pg_roles WHERE rolname='trading-app';").strip(), '0')
 
     def test_owner_conflict_fails_before_creating_service_roles(self):
         self.psql('CREATE DATABASE auth;')
