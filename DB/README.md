@@ -1,3 +1,5 @@
+> AWS deployment now uses RDS and S3/CloudFront. See the [current runtime guide](../deployment/aws-runtime.md); local container startup instructions below are historical.
+
 # Database reference
 
 Read this alongside [the project guide](../docs/project-guide.md). Database names

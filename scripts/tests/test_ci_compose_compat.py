@@ -32,13 +32,13 @@ class ComposeCompatibilityTests(unittest.TestCase):
                             'State': self.states[service]}])
 
     def test_port_removal_preserves_application_and_database_config(self):
-        original = (ROOT / 'deployment/admin-analytics/admin-analyst-stack.compose.yml').read_text()
+        original = (ROOT / 'deployment/admin-analytics/admin-analyst-ci.compose.yml').read_text()
         portable = verifier.portable_test_base(original)
         self.assertNotIn('ports:', portable)
         self.assertIn('postgres:18.6-trixie', portable)
         self.assertIn('../../DB/admin_analytics_db.schema.sql', portable)
         self.assertIn('service_completed_successfully', portable)
-        self.assertEqual(original, (ROOT / 'deployment/admin-analytics/admin-analyst-stack.compose.yml').read_text())
+        self.assertEqual(original, (ROOT / 'deployment/admin-analytics/admin-analyst-ci.compose.yml').read_text())
 
     def test_unexpected_multiline_ports_are_rejected(self):
         with self.assertRaises(ValueError):
@@ -82,7 +82,7 @@ class ComposeCompatibilityTests(unittest.TestCase):
                 verifier.wait_for_stack(self.command, 'verify-test', timeout=1)
 
     def test_normal_staff_commands_keep_existing_project_identity(self):
-        for name in ('start-project.sh', 'stop-project.sh', 'load-demo-data.sh'):
+        for name in ('start-project.sh', 'stop-project.sh'):
             self.assertIn('docker compose -p asset-avengers-internal --env-file .env',
                           (ROOT / 'scripts' / name).read_text())
         override = (ROOT / 'deployment/admin-analytics/admin-analyst-tests.override.yml').read_text()

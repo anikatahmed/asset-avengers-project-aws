@@ -1,3 +1,5 @@
+> For the current RDS/S3 deployment, follow [AWS runtime setup](../deployment/aws-runtime.md). Local database/container commands below apply only to local testing.
+
 # Admin and analyst reporting infrastructure
 
 This folder holds the staff data pipeline and Superset configuration. The shared

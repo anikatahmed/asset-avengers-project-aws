@@ -47,6 +47,8 @@ const EnvSchema = z.object({
   // A session after this long dies no matter how active the user is.
   SESSION_MAX_AGE_HOURS: z.coerce.number().int().positive().default(12),
 
+  AUTH_DB_SSL: z.stringbool().default(false),
+  AUTH_DB_SSL_CA: z.string().optional(),
   AUTH_DB_HOST: z.string().default('localhost'),
   AUTH_DB_PORT: z.coerce.number().int().positive().default(5433),
   AUTH_DB_NAME: z.string().min(1),

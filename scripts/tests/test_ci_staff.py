@@ -77,7 +77,7 @@ Path(os.environ['COPIED_SSO']).write_text(settings['SUPERSET_SSO_SECRET'])
                             pipeline.index("stage('SonarQube Analysis')"))
         self.assertIn('bash scripts/ci-checks.sh staff-cleanup', pipeline)
         self.assertIn("sh 'rm -f .env'", pipeline)
-        config = (ROOT / 'deployment/admin-analytics/admin-analyst-stack.compose.yml').read_text()
+        config = (ROOT / 'deployment/admin-analytics/admin-analyst-ci.compose.yml').read_text()
         self.assertEqual(config.count(':${STAFF_IMAGE_TAG:-local}'), 7)
         self.assertIn("'amr':['pwd','mfa']", (ROOT / 'admin-analytics/pipeline/tests/http-check.py').read_text())
 

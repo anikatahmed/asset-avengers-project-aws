@@ -1,3 +1,5 @@
+> AWS deployment now uses RDS and S3/CloudFront. See the [current runtime guide](../../deployment/aws-runtime.md); local container startup instructions below are historical.
+
 # Setup and verification
 
 Run commands from the repository root. Java builds require Java 25 and Maven.

@@ -1,3 +1,5 @@
+> AWS deployment now uses RDS and S3/CloudFront. See the [current runtime guide](../deployment/aws-runtime.md); local container startup instructions below are historical.
+
 # Asset Avengers: how the project works
 
 This guide describes the whole project as of October 19, 2026: client trading,

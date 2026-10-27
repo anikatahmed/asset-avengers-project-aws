@@ -188,7 +188,7 @@ if __name__=='__main__':
     signal.signal(signal.SIGTERM, terminate)
     with tempfile.TemporaryDirectory(prefix='asset-internal-') as directory, tempfile.NamedTemporaryFile(mode='w',prefix='asset-internal-',suffix='.env') as env_file:
         env_file.write(''.join(key+'='+value+'\n' for key,value in values.items()));env_file.flush()
-        base=ROOT/'deployment/admin-analytics/admin-analyst-stack.compose.yml'
+        base=ROOT/'deployment/admin-analytics/admin-analyst-ci.compose.yml'
         portable=Path(directory)/'staff-test-base.compose.yml'
         portable.write_text(portable_test_base(base.read_text()))
         # Preserve relative build/SQL paths despite placing the generated file in /tmp.

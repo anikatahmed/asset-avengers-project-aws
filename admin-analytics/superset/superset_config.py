@@ -9,7 +9,7 @@ from sqlalchemy.engine import URL
 SECRET_KEY = os.environ['SUPERSET_SECRET_KEY']
 SQLALCHEMY_DATABASE_URI = URL.create('postgresql+psycopg2',
     username=os.environ['SUPERSET_METADATA_USER'], password=os.environ['SUPERSET_METADATA_PASSWORD'],
-    host='reporting-db', port=5432, database=os.environ['SUPERSET_METADATA_DB']).render_as_string(hide_password=False)
+    host=os.getenv('SUPERSET_METADATA_HOST', 'reporting-db'), port=int(os.getenv('SUPERSET_METADATA_PORT', '5432')), database=os.environ['SUPERSET_METADATA_DB']).render_as_string(hide_password=False)
 FEATURE_FLAGS = {'EMBEDDED_SUPERSET': True}
 GUEST_TOKEN_JWT_SECRET = os.environ['SUPERSET_GUEST_TOKEN_SECRET']
 GUEST_TOKEN_JWT_AUDIENCE = 'asset-avengers-internal'

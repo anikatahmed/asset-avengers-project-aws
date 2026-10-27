@@ -1,3 +1,5 @@
+> AWS deployment now uses RDS and S3/CloudFront. See the [current runtime guide](../aws-runtime.md); local container startup instructions below are historical.
+
 # Admin and analyst Docker Compose stack
 
 This folder contains deployment configuration for the admin/analyst system.

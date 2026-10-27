@@ -1,3 +1,5 @@
+> For the current RDS/S3 deployment, follow [AWS runtime setup](../deployment/aws-runtime.md). Local database/container commands below apply only to local testing.
+
 # Authentication service
 
 For its connections to both Java APIs and the client/staff UIs, see the

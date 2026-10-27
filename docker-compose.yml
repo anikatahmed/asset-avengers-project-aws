@@ -1,4 +1,5 @@
-# Client/auth stack. Staff UI/API, Kafka and reporting run from the separate
+# AWS API/auth stack. Angular is hosted in S3/CloudFront; PostgreSQL is in RDS.
+# Staff API, Kafka and reporting run from the separate
 # deployment/admin-analytics/admin-analyst-stack.compose.yml and join trading_platform_network.
 # Ports here are host entry points; containers use service names and internal ports.
 services:
@@ -11,7 +12,7 @@ services:
     ports:
       - "8080:8080"
     environment:
-      - DB_URL=jdbc:postgresql://postgres:5432/${POSTGRES_DB:-Endgame_Trading}
+      - DB_URL=${DB_URL:?set the RDS trading JDBC URL in .env}
       - DB_USERNAME=${DB_USERNAME}
       - DB_PASSWORD=${DB_PASSWORD}
       - DB_DRIVER_CLASS_NAME=org.postgresql.Driver
@@ -24,34 +25,9 @@ services:
       - PRICING_CACHE_TTL=${PRICING_CACHE_TTL:-PT15M}
       - PRICING_AUTOMATIC_DAILY_LIMIT=${PRICING_AUTOMATIC_DAILY_LIMIT:-1500}
       - PRICING_TOTAL_DAILY_LIMIT=${PRICING_TOTAL_DAILY_LIMIT:-1800}
-    depends_on:
-      postgres:
-        condition: service_healthy
     networks:
       - trading_platform_network
 
-  auth-db:
-    image: postgres:18.6-trixie
-    container_name: endgame_auth_db
-    restart: unless-stopped
-    environment:
-      POSTGRES_USER: ${AUTH_DB_USER:-auth}
-      POSTGRES_PASSWORD: ${AUTH_DB_PASSWORD:?set AUTH_DB_PASSWORD in .env}
-      POSTGRES_DB: ${AUTH_DB_NAME:-auth}
-    ports: 
-      - "${AUTH_DB_PORT:-5433}:5432"
-    volumes:
-      - auth_db_data:/var/lib/postgresql
-      - ./DB/auth_db.schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
-      - ./DB/auth_db_test_data.sql:/docker-entrypoint-initdb.d/02-test-data.sql:ro
-    healthcheck:
-      test: ["CMD-SHELL", "psql -X -v ON_ERROR_STOP=1 -h 127.0.0.1 -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB:-Endgame_Trading}\" -Atc \"SELECT 1\" >/dev/null"]
-      interval: 5s
-      timeout: 3s
-      retries: 10
-    networks:
-      - trading_platform_network
-    
   auth-server:
     build:
       context: ./auth-server
@@ -59,15 +35,17 @@ services:
     container_name: endgame_auth_server
     restart: unless-stopped
     ports:
-      # Dev convenience (Swagger at /api). Remove for anything real: the browser goes through nginx.
+      # Route browser requests through an HTTPS ingress/CloudFront API origin.
       - "${AUTH_SERVICE_PORT:-3000}:3000"
     environment:
       NODE_ENV: production
       SUPERSET_SSO_SECRET: ${SUPERSET_SSO_SECRET:-}
-      # Container side: the server listens on 3000 and reaches the DB by service name.
+      # Container port stays 3000; database connections go to RDS.
       AUTH_SERVICE_PORT: 3000
-      AUTH_DB_HOST: auth-db
-      AUTH_DB_PORT: 5432
+      AUTH_DB_HOST: ${AUTH_DB_HOST:?set the RDS endpoint in .env}
+      AUTH_DB_PORT: ${AUTH_DB_PORT:-5432}
+      AUTH_DB_SSL: ${AUTH_DB_SSL:-true}
+      AUTH_DB_SSL_CA: ${AUTH_DB_SSL_CA:-}
       AUTH_DB_NAME: ${AUTH_DB_NAME:-auth}
       AUTH_DB_USER: ${AUTH_DB_USER:-auth}
       AUTH_DB_PASSWORD: ${AUTH_DB_PASSWORD:?set AUTH_DB_PASSWORD in .env}
@@ -86,11 +64,8 @@ services:
       EMAIL_RESET_TEMPLATE_ID: ${EMAIL_RESET_TEMPLATE_ID:-}
       SESSION_IDLE_TIMEOUT_MINUTES: ${SESSION_IDLE_TIMEOUT_MINUTES:-30}
       SESSION_MAX_AGE_HOURS: ${SESSION_MAX_AGE_HOURS:-12}
-      # The frontend container's address. Browsers call through nginx (same origin), so CORS rarely applies.
-      CORS_ALLOWED_ORIGIN: http://localhost:8084
-    depends_on:
-      auth-db:
-        condition: service_healthy
+      # Public frontend origin for requests reaching auth directly.
+      CORS_ALLOWED_ORIGIN: ${CORS_ALLOWED_ORIGIN:?set the CloudFront frontend origin}
     healthcheck:
       test: ["CMD", "node", "-e", "fetch('http://localhost:3000/health/ready').then(r => process.exit(r.ok ? 0 : 1), () => process.exit(1))"]
       interval: 10s
@@ -100,54 +75,7 @@ services:
     networks:
       - trading_platform_network
 
-  postgres:
-    image: postgres:18.6-trixie
-    container_name: endgame_postgres
-    restart: unless-stopped
-    environment:
-      POSTGRES_USER: ${DB_USERNAME:?set DB_USERNAME in .env}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:?set DB_PASSWORD in .env}
-      POSTGRES_DB: ${POSTGRES_DB:-Endgame_Trading}
-    ports:
-      - "5432:5432"
-    volumes:
-      - ~/.asset_postgres_test_data:/var/lib/postgresql
-      - ./DB/endgame_db.schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
-      # Initialization runs only on an empty data directory. For existing data,
-      # apply catalogue/schema updates with: bash setup-test-db.sh
-      - ./DB/instruments.seed.sql:/docker-entrypoint-initdb.d/02-instruments.sql:ro
-    healthcheck:
-      test: ["CMD-SHELL", "psql -X -v ON_ERROR_STOP=1 -h 127.0.0.1 -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB:-Endgame_Trading}\" -Atc \"SELECT 1\" >/dev/null"]
-      interval: 5s
-      timeout: 3s
-      retries: 10
-    networks:
-      - trading_platform_network
-
-  # Admin/analyst services live in deployment/admin-analytics/admin-analyst-stack.compose.yml.
-
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-      args:
-        LOGOKIT_PUBLISHABLE_TOKEN: ${LOGOKIT_PUBLISHABLE_TOKEN:-}
-    container_name: trading_platform_frontend
-    restart: unless-stopped
-    ports:
-      - "8084:80"
-    depends_on:
-      backend:
-        condition: service_started
-      auth-server:
-        condition: service_healthy
-    networks:
-      - trading_platform_network
-
 networks:
   trading_platform_network:
-    name: trading_platform_network
+    name: ${TRADING_NETWORK:-trading_platform_network}
     driver: bridge
-    
-volumes:
-  auth_db_data:

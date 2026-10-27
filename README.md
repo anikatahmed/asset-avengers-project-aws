@@ -1,24 +1,17 @@
 # Asset Avengers Trading Platform
 
-## Running the demo app
+## Running on AWS
 
-Make sure your .env is up to date!
+Angular applications are hosted in S3/CloudFront and PostgreSQL databases in RDS.
+Compose runs the APIs, auth, Kafka, reporting workers and Superset.
+Follow [AWS runtime setup](deployment/aws-runtime.md) to prepare databases, fill
+`.env`, and configure frontend/API routing before starting:
 
-To run the app:
 ```bash
-chmod +x start-project.sh 
-chmod +x load-demo-data.sh 
-chmod +x stop-project.sh 
-cd scripts
-./start-project.sh 
-./load-demo-data.sh
+bash scripts/start-project.sh
 ```
 
-To shut down the app:
-```bash
-./stop-project.sh 
-```
-
+Stop application stacks with `bash scripts/stop-project.sh`; persistent data is preserved.
 
 ## Documentation
 
@@ -42,16 +35,14 @@ To shut down the app:
 - `auth-server/` - NestJS login, sessions and token service
 - `DB/` - Database schemas and catalogue/auth fixtures
 - `scripts/` - SQL seed synchronization and database verification
-- `docker-compose.yml` - Current local stack and persistent database storage
+- `docker-compose.yml` - AWS trading API/auth runtime using RDS
 - `README.md` - project overview and team workflow
 
 ## Local setup and catalogue changes
 
-Copy `.env.example` to `.env` and supply database credentials, a shared JWT secret
-and the pricing API key. Start the stack with `docker compose up -d --build` and
-open `http://localhost:8084`. Auth listens on port 3000, the trading/orders API on
-8080, and the trading PostgreSQL database on 5432. Install the Docker Compose plugin
-to run these commands. Use `docker-compose.yml`; `new-compose.yml` is obsolete.
+Copy `.env.example` to `.env` and configure RDS endpoints, service credentials,
+a shared JWT secret, frontend origins and the pricing API key as described in the
+[AWS runtime guide](deployment/aws-runtime.md). CI uses separate disposable local stacks.
 
 The instrument catalogue source is `DB/instruments.seed.sql`. After editing it, run:
 
@@ -60,14 +51,9 @@ python3 scripts/generate-instrument-seed.py
 python3 scripts/generate-instrument-seed.py --check
 ```
 
-Compose loads the schema/catalogue when trading database storage is first initialized.
-For an existing local database, apply updates with `bash setup-test-db.sh`; normal
-restarts keep saved accounts and do not rerun initialization scripts. New portfolios
-start empty with zero cash. Company-name search uses the saved catalogue and supports
-matching choices in market watch, Search & Trade and the trade dialog. Click a
-holding's name to view average cost, total value, gain/loss and saved purchase history. The auth seed includes eight local development credentials.
-See the [project guide](docs/project-guide.md) for database relationships, source-code
-entry points, live polling intervals, order execution, tests and current limitations.
+Apply schema/catalogue migrations to RDS explicitly before deploying. Normal
+startup does not initialize databases or load fixtures. `setup-test-db.sh` is for
+local database testing only.
 
 Before pushing, include the new guide, SQL seed, helper scripts and new Java/Angular
 files along with modified files. Keep `.env`, generated build output and database

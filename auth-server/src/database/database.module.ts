@@ -28,6 +28,9 @@ export const PG_POOL = Symbol('PG_POOL');
           database: config.get('AUTH_DB_NAME', { infer: true }),
           user: config.get('AUTH_DB_USER', { infer: true }),
           password: config.get('AUTH_DB_PASSWORD', { infer: true }),
+          ssl: config.get('AUTH_DB_SSL', { infer: true })
+            ? { rejectUnauthorized: true, ca: config.get('AUTH_DB_SSL_CA', { infer: true }) || undefined }
+            : false,
           max: 10,
         });
         // Without this listener, an idle connection dying (e.g. Postgres restarts)

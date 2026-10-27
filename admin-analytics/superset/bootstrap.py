@@ -61,13 +61,14 @@ def setup():
     database=db.session.query(Database).filter_by(database_name='Asset Avengers analytics').one_or_none()
     if database is None:
         database=Database(database_name='Asset Avengers analytics')
-        database.set_sqlalchemy_uri(URL.create('postgresql+psycopg2',
-            username=os.environ['SUPERSET_REPORTING_USER'],password=os.environ['SUPERSET_REPORTING_PASSWORD'],
-            host='reporting-db',port=5432,database=os.environ['ADMIN_DB_NAME']).render_as_string(hide_password=False))
         database.expose_in_sqllab=False
         database.allow_dml=False
         db.session.add(database)
-        db.session.flush()
+    # Refresh saved connections when migrating local reporting data to RDS.
+    database.set_sqlalchemy_uri(URL.create('postgresql+psycopg2',
+        username=os.environ['SUPERSET_REPORTING_USER'],password=os.environ['SUPERSET_REPORTING_PASSWORD'],
+        host=os.getenv('ADMIN_DB_HOST', 'reporting-db'),port=int(os.getenv('ADMIN_DB_PORT', '5432')),database=os.environ['ADMIN_DB_NAME']).render_as_string(hide_password=False))
+    db.session.flush()
     # A separate author account can SELECT/JOIN reporting data and save its own
     # datasets/charts. Database writes are denied both here and by PostgreSQL grants.
     database.expose_in_sqllab=True
@@ -193,7 +194,7 @@ def setup():
     db.session.commit()
     # Only this initialization job has registry-write credentials. Running Superset
     # itself receives a reporting login restricted to SELECT on approved views.
-    with psycopg2.connect(host='reporting-db',dbname=os.environ['ADMIN_DB_NAME'],
+    with psycopg2.connect(host=os.getenv('ADMIN_DB_HOST', 'reporting-db'),port=int(os.getenv('ADMIN_DB_PORT', '5432')),dbname=os.environ['ADMIN_DB_NAME'],
         user=os.environ['ADMIN_DB_SUPERUSER'],password=os.environ['ADMIN_DB_SUPERUSER_PASSWORD']) as connection:
         with connection.cursor() as cur:
             cur.executemany('''INSERT INTO integration.dashboard_registry VALUES (%s,%s,%s)
