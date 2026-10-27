@@ -17,6 +17,8 @@ Create or migrate these separate PostgreSQL databases in RDS:
 | `admin_analytics` | Staff API, reporting workers and Superset reporting reader |
 | `superset_metadata` | Superset configuration and dashboard metadata |
 
+For a dump/restore migration, use the [database creation helper](#create-empty-rds-targets-for-pg_restore) below before restoring.
+
 They can share one RDS instance/endpoint. Use separate service users and preserve
 the reporting roles in `DB/admin_analytics_db.schema.sql`. Restore existing data
 before switching traffic. For empty databases, apply `DB/auth_db.schema.sql`,
@@ -54,6 +56,44 @@ AUTH_DB_SSL_CA='-----BEGIN CERTIFICATE-----
 For full server identity verification on JDBC/Python connections, configure the
 RDS CA trust file in those containers and use `sslmode=verify-full`. Never disable
 certificate verification in the auth client to work around a missing CA.
+
+## Create empty RDS targets for pg_restore
+
+Fill the database usernames and passwords in root `.env`. Use seven distinct
+service logins, separate from your RDS administrator. Set `ADMIN_DB_SUPERUSER`
+to a dedicated reporting owner such as `reporting_owner`; despite the historical
+variable name, this script does not grant it PostgreSQL superuser privileges.
+Replace `SOURCE_DB_HOST=YOUR-RDS-ENDPOINT` with your actual RDS hostname.
+
+From an EC2 host with Docker/Compose and access to RDS on port 5432, run:
+
+```bash
+bash scripts/create-rds-databases.sh
+```
+
+The script prompts for the RDS administrator username and password. For automation,
+provide `RDS_ADMIN_USER` and `RDS_ADMIN_PASSWORD` as environment variables. Optional
+`RDS_HOST` and `RDS_PORT` override `SOURCE_DB_HOST` and port 5432. An alternate
+credentials file can be passed as the script's only argument. Compose parses the
+file; the script never sources it as executable shell code. The helper starts only
+a temporary PostgreSQL client container, not a database server. It uses TLS
+(`sslmode=require`, encryption without server identity verification).
+
+This prepares the four empty databases, their owners, the staff/ETL/reader logins,
+and analytics group memberships. It grants the migration administrator membership
+in each database owner role so `pg_restore --role=OWNER` can create objects with
+the correct ownership. Existing passwords/data are preserved; existing databases
+with a different owner cause an error before any persistent changes. Review those
+databases before explicitly changing ownership. A failure after creation begins
+can leave partial setup; correct the error and rerun. The script does not rotate
+existing credentials, drop databases, restore backups, or create application tables.
+
+For each dump, restore using `--no-owner --no-privileges --exit-on-error` and the
+owner printed by the script as `--role`. Use an empty target, not a database already
+containing application tables. Afterwards, run `DB/admin_analytics_db.schema.sql`
+as the reporting owner to restore reporting grants. The metadata database owner
+must be `SUPERSET_METADATA_USER` so Superset can run its migrations. Do not run
+`init-databases.sql` as an additional required step when using this helper.
 
 ## Deploy Angular separately
 
