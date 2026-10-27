@@ -24,13 +24,13 @@ fi
 if ! docker info >/dev/null 2>&1; then
   echo 'Docker is unavailable. Start Docker Desktop and try again.' >&2; exit 1
 fi
-STAFF=(docker-compose -p asset-avengers-internal --env-file .env
+STAFF=(docker compose -p asset-avengers-internal --env-file .env
        -f deployment/admin-analytics/admin-analyst-stack.compose.yml)
 # Validate requested configuration before starting either stack; no secrets printed.
-if [[ "$MODE" != --staff ]]; then docker-compose config >/dev/null; fi
+if [[ "$MODE" != --staff ]]; then docker compose config >/dev/null; fi
 if [[ "$MODE" != --client ]]; then "${STAFF[@]}" config >/dev/null; fi
 # Check SQL connections directly: pg_isready can succeed for a missing database.
-# Older docker-compose versions also lack up --wait.
+# Explicit SQL checks also verify the configured database and login.
 wait_for_database() {
   local label="$1"
   shift
@@ -53,22 +53,22 @@ prepare_database() {
 }
 if [[ "$MODE" != --staff ]]; then
   # Apply identity columns and MFA tables to existing auth volumes before starting auth.
-  docker-compose up -d auth-db postgres
-  prepare_database 'Auth database' auth-db docker-compose
-  prepare_database 'Trading database' postgres docker-compose
-  docker-compose exec -T auth-db sh -c 'psql -X -q -v ON_ERROR_STOP=1 --single-transaction -U "$POSTGRES_USER" -d "$POSTGRES_DB"' < DB/auth_db.schema.sql
-  docker-compose exec -T postgres sh -c 'psql -X -q -v ON_ERROR_STOP=1 --single-transaction -U "$POSTGRES_USER" -d "$POSTGRES_DB"' < DB/endgame_db.schema.sql
+  docker compose up -d auth-db postgres
+  prepare_database 'Auth database' auth-db docker compose
+  prepare_database 'Trading database' postgres docker compose
+  docker compose exec -T auth-db sh -c 'psql -X -q -v ON_ERROR_STOP=1 --single-transaction -U "$POSTGRES_USER" -d "$POSTGRES_DB"' < DB/auth_db.schema.sql
+  docker compose exec -T postgres sh -c 'psql -X -q -v ON_ERROR_STOP=1 --single-transaction -U "$POSTGRES_USER" -d "$POSTGRES_DB"' < DB/endgame_db.schema.sql
   # Seed the catalogue even after recovery; upserts preserve saved instruments and suspensions.
-  docker-compose exec -T postgres sh -c 'psql -X -q -v ON_ERROR_STOP=1 --single-transaction -U "$POSTGRES_USER" -d "$POSTGRES_DB"' < DB/instruments.seed.sql
-  docker-compose up -d --build
+  docker compose exec -T postgres sh -c 'psql -X -q -v ON_ERROR_STOP=1 --single-transaction -U "$POSTGRES_USER" -d "$POSTGRES_DB"' < DB/instruments.seed.sql
+  docker compose up -d --build
 fi
 if [[ "$MODE" != --client ]]; then
   # Initialization directories run only once. Apply current idempotent schemas and
   # missing logins explicitly for existing volumes; never reset saved data.
   "${STAFF[@]}" up -d reporting-db
-  prepare_database 'Trading database' postgres docker-compose
+  prepare_database 'Trading database' postgres docker compose
   prepare_database 'Reporting database' reporting-db "${STAFF[@]}"
-  docker-compose exec -T postgres sh -c 'psql -X -q -v ON_ERROR_STOP=1 --single-transaction -U "$POSTGRES_USER" -d "$POSTGRES_DB"' < DB/endgame_db.schema.sql
+  docker compose exec -T postgres sh -c 'psql -X -q -v ON_ERROR_STOP=1 --single-transaction -U "$POSTGRES_USER" -d "$POSTGRES_DB"' < DB/endgame_db.schema.sql
   "${STAFF[@]}" exec -T reporting-db sh -c 'psql -X -q -v ON_ERROR_STOP=1 --single-transaction -U "$POSTGRES_USER" -d "$POSTGRES_DB"' < DB/admin_analytics_db.schema.sql
   "${STAFF[@]}" exec -T reporting-db sh -c 'psql -X -q -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -d "$POSTGRES_DB" -f /docker-entrypoint-initdb.d/02-logins.sql'
   "${STAFF[@]}" up -d --build

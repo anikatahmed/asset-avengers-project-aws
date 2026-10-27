@@ -39,7 +39,7 @@ class StaffPipelineTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             folder = Path(directory)
             calls = folder / 'calls'
-            compose = folder / 'docker-compose'
+            compose = folder / 'docker'
             compose.write_text("""#!/usr/bin/env python3
 import os,sys
 from pathlib import Path

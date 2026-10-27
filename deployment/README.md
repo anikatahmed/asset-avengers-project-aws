@@ -26,10 +26,10 @@ From the repository root, after configuring the single repository-root `.env` fr
 
 ```bash
 # Client, trading and authentication.
-docker-compose up -d --build
+docker compose up -d --build
 
 # Admin and analyst system; all settings come from root .env.
-docker-compose -p asset-avengers-internal --env-file .env \
+docker compose -p asset-avengers-internal --env-file .env \
   -f deployment/admin-analytics/admin-analyst-stack.compose.yml up -d --build
 ```
 

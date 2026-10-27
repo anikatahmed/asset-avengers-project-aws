@@ -15,7 +15,7 @@ info:
     - Orders are never edited or deleted; cancelling records a new status.
 
 servers:
-  - url: http://localhost:8082/api/v1
+  - url: http://localhost:8080/api/v1
 
 security:
   - bearerAuth: []

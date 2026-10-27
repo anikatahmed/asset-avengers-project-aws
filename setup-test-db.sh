@@ -18,7 +18,7 @@ if [[ -z "$DB_CONTAINER_NAME" ]]; then
     DB_CONTAINER_NAME=endgame_test_db
   fi
 fi
-DB_PORT="${ENDGAME_DB_PORT:-8083}"
+DB_PORT="${ENDGAME_DB_PORT:-5432}"
 DB_USERNAME="${ENDGAME_DB_USER:-admin}"
 DB_PASSWORD="${ENDGAME_DB_PASSWORD:-admin123}"
 DB_NAME="${ENDGAME_DB_NAME:-Endgame_Trading}"

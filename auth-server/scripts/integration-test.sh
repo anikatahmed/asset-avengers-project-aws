@@ -2,14 +2,14 @@
 # End-to-end proof (lecture 15): a token issued by THIS service is accepted by
 # the Spring API, and the session lifecycle behaves as designed.
 #
-# (npm run start:dev), and the Spring backend on port 8082 with the same JWT_SECRET.
+# (npm run start:dev), and the Spring backend on port 8080 with the same JWT_SECRET.
 # For the auth service alone (no Spring), scripts/session-test.sh checks more session rules.
 #
 # Usage: npm run test:integration
 set -uo pipefail
 
 AUTH="http://localhost:${AUTH_SERVICE_PORT:-3000}"
-API="http://localhost:${SPRING_PORT:-8082}"
+API="http://localhost:${SPRING_PORT:-8080}"
 PROTECTED="$API/api/v1/me/orders"   # a CLIENT route; a newly registered user gets 200 and []
 EMAIL="it-$(date +%s)@example.com"
 PASSWORD="integration-test-password"
@@ -73,7 +73,7 @@ expect_status "logout" 200 "$(status_of "$(post /auth/logout "{\"refreshToken\":
 expect_status "refresh after logout" 401 "$(status_of "$(post /auth/refresh "{\"refreshToken\":\"$REFRESH3\"}")")"
 
 stage "Confirmed in Postgres, not just HTTP"
-revoked=$(docker-compose -f ../docker-compose.yml --env-file ../.env exec -T auth-db sh -c 'psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -tA -v ON_ERROR_STOP=1' <<SQL
+revoked=$(docker compose -f ../docker-compose.yml --env-file ../.env exec -T auth-db sh -c 'psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -tA -v ON_ERROR_STOP=1' <<SQL
 SELECT count(*) FROM sessions s JOIN users u ON u.id = s.user_id
 WHERE u.email = '$EMAIL' AND s.revoked_at IS NOT NULL;
 SQL

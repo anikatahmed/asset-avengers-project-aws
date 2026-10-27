@@ -36,7 +36,7 @@ writes a project-specific receipt under ignored `.ci/`. Jenkins sets
 Every build, start, status and log command goes through the helper. The helper
 requires a valid CI project name and a matching initialization receipt. The Jenkins
 post stage skips cleanup if initialization did not succeed. Otherwise `cleanup`
-executes `docker-compose` with the explicit CI file and project, followed by
+executes `docker compose` with the explicit CI file and project, followed by
 `down --volumes --remove-orphans`. The receipt is removed only after successful
 cleanup, so a failed cleanup can be retried. Container logs are captured before
 cleanup for failure notifications. Even partial startup failures can be
@@ -46,7 +46,7 @@ These guards prevent accidental cleanup of another stack. They are not a securit
 boundary against untrusted code with Docker daemon access. Jenkins jobs still need
 trusted execution and appropriately controlled agents.
 
-Use `docker-compose`, including on older VMs. This configuration needs no override
+Use the `docker compose` plugin on development and CI hosts. This configuration needs no override
 reset tags, `--wait`, or `--quiet`. The exact installed VM version should still be
 validated before rollout.
 
@@ -293,7 +293,7 @@ success. Success notifications now say this explicitly. Continue using the norma
 startup script to run the development application. Production deployment would be
 a separate workflow with a defined target, credentials and release policy.
 
-The old pipeline slept ten seconds and checked `docker-compose ps`. That command
+The old pipeline slept ten seconds and checked `docker compose ps`. That command
 can succeed while an application is still starting or its database is unavailable.
 The existing `scripts/ci-checks.sh` now performs these checks without adding another
 helper script:
@@ -352,15 +352,14 @@ the passing tests. Bash syntax and whitespace checks passed. No live Jenkins run
 or saved-development-stack startup was performed for this change.
 
 
-## Older Docker Compose compatibility (problem 8)
+## Docker Compose plugin
 
-Use the standalone `docker-compose` command on the VM. Verification no longer
-requires the plugin-style `docker compose`, the `up --wait` / `--wait-timeout` flags,
-`--quiet`, or YAML `!reset` tags. Normal staff configuration uses the legacy-friendly
+Use the `docker compose` plugin command on the VM. Verification uses explicit readiness checks without the `up --wait` / `--wait-timeout`
+flags, `--quiet`, or YAML `!reset` tags. Normal staff configuration uses the
 `version: "3.8"` format and puts its existing project name in the CLI:
 
 ```bash
-docker-compose -p asset-avengers-internal --env-file .env \
+docker compose -p asset-avengers-internal --env-file .env \
   -f deployment/admin-analytics/admin-analyst-stack.compose.yml up -d --build
 ```
 
@@ -438,8 +437,8 @@ staff Superset configuration receive the same SSO secret.
 Required Jenkins credentials are now `FAUXNANCE_KEY` and `SONAR_TOKEN`; internal
 DB/JWT values no longer require saved Jenkins credentials. Existing optional email
 notification settings are unchanged. No Resend credential or real email delivery is
-needed for these tests. Build agents need Python 3, Bash, Docker and the standalone
-`docker-compose` command, plus dependency/registry access and enough RAM/disk for
+needed for these tests. Build agents need Python 3, Bash, Docker and the
+`docker compose` plugin, plus dependency/registry access and enough RAM/disk for
 Kafka, Superset and both temporary stacks. The existing overall 30-minute pipeline
 timeout remains; observe cold-cache builds on the actual agent.
 
@@ -654,8 +653,8 @@ A Docker container name alone does not assign a Jenkins node label. Set the
 Built-In Node executor count to zero so other jobs also avoid running build work
 on the controller. These server settings are not applied by a Git commit.
 
-The prepared agent must expose Python 3, Bash, Git, Docker and standalone
-`docker-compose` to its Jenkins process and have permission to access the Docker
+The prepared agent must expose Python 3, Bash, Git, Docker and the
+`docker compose` plugin to its Jenkins process and have permission to access the Docker
 daemon. Host installations do not automatically appear inside agent containers.
 If the label is missing/offline, the build waits for a matching agent rather than
 falling back to the controller. Confirm the fresh build console says Running on

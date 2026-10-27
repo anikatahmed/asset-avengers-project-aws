@@ -16,7 +16,7 @@ import java.util.UUID;
 @Service
 public class TradingAdminClient implements AdminCommands {
     private final RestClient client;
-    public TradingAdminClient(@Value("${trading.base-url:http://backend:8082}") String url) {
+    public TradingAdminClient(@Value("${trading.base-url:http://backend:8080}") String url) {
         var factory=new org.springframework.http.client.SimpleClientHttpRequestFactory();
         factory.setConnectTimeout(5000);
         factory.setReadTimeout(15000);

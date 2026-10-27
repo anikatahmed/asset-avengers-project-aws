@@ -57,7 +57,7 @@ if __name__ == '__main__':
                 '{"note":"Recorded audit metadata"}','2026-10-01T12:00:00Z');
             """)
         env=os.environ.copy()
-        env.update(ADMIN_DB_URL=f'jdbc:postgresql://127.0.0.1:8083/{database}?options=-c%20role%3Danalytics_admin',
+        env.update(ADMIN_DB_URL=f'jdbc:postgresql://127.0.0.1:5432/{database}?options=-c%20role%3Danalytics_admin',
                    ADMIN_DB_USERNAME=configuration['POSTGRES_USER'],ADMIN_DB_PASSWORD=configuration['POSTGRES_PASSWORD'],
                    JWT_SECRET=secret,JWT_ISSUER='endgame-auth',STAFF_JWT_AUDIENCE='endgame-staff',SERVER_PORT=str(port))
         java=Path('/Library/Java/JavaVirtualMachines/openjdk-25.jdk/Contents/Home/bin/java')

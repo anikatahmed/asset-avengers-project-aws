@@ -156,7 +156,7 @@ services:
       JWT_ISSUER: ${JWT_ISSUER:-endgame-auth}
       # The staff service accepts only tokens auth-server issued for staff (aud contains this).
       STAFF_JWT_AUDIENCE: ${STAFF_JWT_AUDIENCE:-endgame-staff}
-      TRADING_API_URL: ${TRADING_API_URL:-http://backend:8082}
+      TRADING_API_URL: ${TRADING_API_URL:-http://backend:8080}
       SUPERSET_API_URL: http://superset:8088
       SUPERSET_PUBLIC_URL: ${SUPERSET_PUBLIC_URL:-auto}
       SUPERSET_PUBLIC_PORT: ${SUPERSET_PORT:-8088}

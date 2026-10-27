@@ -67,11 +67,11 @@ flowchart LR
     Browser[Client Angular UI] --> Nginx[Client Nginx: 8084]
     Staff[Staff test UI: 8086] -->|/auth| Auth[NestJS auth: 3000]
     Nginx -->|/auth| Auth
-    Nginx -->|client APIs| Backend[Trading Spring API: 8082]
+    Nginx -->|client APIs| Backend[Trading Spring API: 8080]
     Staff -->|/api/v1| Internal[Internal Spring API: 8085]
     Internal -->|ADMIN commands and original JWT| Backend
     Auth --> AuthDB[(Auth PostgreSQL: 5433)]
-    Backend --> TradingDB[(Endgame_Trading PostgreSQL: 8083)]
+    Backend --> TradingDB[(Endgame_Trading PostgreSQL: 5432)]
     Backend --> Pricing[External Fauxnance pricing API]
     TradingDB -->|Committed outbox| Publisher[Python publisher]
     Publisher --> Kafka[Kafka]
@@ -444,7 +444,7 @@ exception into a 500. Auth's `ApiErrorFilter` produces its consistent JSON error
 | `PUT/DELETE /api/v1/me/watchlist/{symbol}` | Persist or remove a star |
 
 Swagger is available on auth at `http://localhost:3000/api` and Spring at
-`http://localhost:8082/swagger-ui/index.html`. The YAML API documents include broader
+`http://localhost:8080/swagger-ui/index.html`. The YAML API documents include broader
 planned features; current controller code is authoritative for implemented routes.
 The older holdings controller is profile-gated and does not supply the client
 portfolio: the account snapshot is the current source.
@@ -490,7 +490,7 @@ Configure the same JWT secret in auth and Spring. Use Java 25 for backend builds
 
 ```bash
 # Build/start the local stack; frontend is http://localhost:8084.
-docker-compose up -d --build
+docker compose up -d --build
 
 # Confirm the test-data fixture matches the canonical SQL seed.
 python3 scripts/generate-instrument-seed.py --check
@@ -530,7 +530,7 @@ After editing the canonical seed, synchronize the fixture before running setup o
 committing. A normal restart does not import new seed rows into existing storage.
 
 The PostgreSQL runner requires a running `endgame_postgres` container, its host port
-8083, Maven and Java 25. `--container`, `--port` and `--java-home` support other setups.
+5432, Maven and Java 25. `--container`, `--port` and `--java-home` support other setups.
 It uses smaller test pools to avoid exhausting the live server's connection limit.
 Its temporary database is removed afterward; it does not reset `Endgame_Trading`.
 
@@ -721,7 +721,7 @@ Both clients coordinate concurrent refresh requests because refresh tokens rotat
 If port 8086 is unavailable, the root Compose command alone is insufficient:
 
 ```bash
-docker-compose -p asset-avengers-internal --env-file .env \
+docker compose -p asset-avengers-internal --env-file .env \
   -f deployment/admin-analytics/admin-analyst-stack.compose.yml up -d --build
 ```
 
@@ -838,7 +838,7 @@ settings. From the repository root:
 ```bash
 bash scripts/start-project.sh
 # Staff only, when the client/auth stack is already running:
-docker-compose -p asset-avengers-internal --env-file .env \
+docker compose -p asset-avengers-internal --env-file .env \
   -f deployment/admin-analytics/admin-analyst-stack.compose.yml up -d --build
 ```
 
@@ -910,7 +910,7 @@ actual reachable host IP, not the VM's own IP or localhost.
 ## Resetting auth and trading data together
 
 The client trading database uses the host bind mount `~/.asset_postgres_test_data`;
-auth uses a Docker named volume. `docker-compose down --volumes` alone deletes the
+auth uses a Docker named volume. `docker compose down --volumes` alone deletes the
 auth volume but leaves the trading folder intact. The stop helper asks `y/no` before deletion. Choosing `y` stops both stacks,
 removes their volumes, and clears only that fixed trading data folder using a
 temporary PostgreSQL container. Choosing `no`, pressing Enter, or receiving no
@@ -923,7 +923,7 @@ Old portfolios are never attached to a new identity merely because emails match.
 The schema migration removes the trading-only email uniqueness constraint without
 removing users, balances, banks, holdings or history.
 
-The start/stop helpers use the standalone `docker-compose` command for the VM.
+The start/stop helpers use the `docker compose` plugin command for the VM.
 Configuration checks redirect stdout to `/dev/null`, keeping rendered secrets out
 of terminal output without using the unsupported quiet flag. Startup polls database
 readiness directly instead of relying on newer Compose wait options.
@@ -1042,7 +1042,7 @@ browser test environment supplies localStorage for appearance tests.
 ### Recovering an interrupted PostgreSQL initialization
 
 If startup reports `database "Endgame_Trading" does not exist`, inspect
-`docker-compose logs postgres`. A first-run failure (for example, a bind-mount
+`docker compose logs postgres`. A first-run failure (for example, a bind-mount
 ownership error) can leave a PostgreSQL cluster present before Docker creates the
 application database. Subsequent restarts skip the one-time initialization scripts.
 

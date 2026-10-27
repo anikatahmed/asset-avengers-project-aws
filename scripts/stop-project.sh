@@ -23,8 +23,8 @@ if ! docker info >/dev/null 2>&1; then
   echo 'Docker is unavailable. Start Docker Desktop and try again.' >&2
   exit 1
 fi
-CLIENT=(docker-compose --env-file .env)
-STAFF=(docker-compose -p asset-avengers-internal --env-file .env
+CLIENT=(docker compose --env-file .env)
+STAFF=(docker compose -p asset-avengers-internal --env-file .env
        -f deployment/admin-analytics/admin-analyst-stack.compose.yml)
 # Validate both configurations before removing anything; never print secrets.
 "${CLIENT[@]}" config >/dev/null

@@ -9,7 +9,7 @@ bash scripts/start-project.sh
 bash scripts/load-demo-data.sh
 ```
 
-The startup script defaults to the full stack (`--all`); `--client` and `--staff` select a subset. Use `docker-compose` on older Docker installations. Normal startup does not fund clients; the demo loader explicitly adds synthetic portfolios and publishes reports. All local staff images now use `:local` tags; rebuild after pulling these changes rather than using the old images.
+The startup script defaults to the full stack (`--all`); `--client` and `--staff` select a subset. Use the `docker compose` plugin. Normal startup does not fund clients; the demo loader explicitly adds synthetic portfolios and publishes reports. All local staff images now use `:local` tags; rebuild after pulling these changes rather than using the old images.
 
 | Workspace | URL on the Docker host | Development login |
 |---|---|---|

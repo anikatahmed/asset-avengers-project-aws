@@ -17,7 +17,7 @@ spec.loader.exec_module(verifier)
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--container', default='endgame_postgres')
-    parser.add_argument('--port', type=int, default=8083)
+    parser.add_argument('--port', type=int, default=5432)
     parser.add_argument('--java-home')
     args = parser.parse_args()
     database = 'asset_backend_verify_' + uuid.uuid4().hex[:12]

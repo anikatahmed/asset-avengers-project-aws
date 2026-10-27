@@ -192,7 +192,7 @@ if __name__=='__main__':
         portable=Path(directory)/'staff-test-base.compose.yml'
         portable.write_text(portable_test_base(base.read_text()))
         # Preserve relative build/SQL paths despite placing the generated file in /tmp.
-        command=['docker-compose','-p',project,'--project-directory',str(base.parent),
+        command=['docker', 'compose','-p',project,'--project-directory',str(base.parent),
                  '--env-file',env_file.name,'-f',str(portable),
                  '-f',str(ROOT/'deployment/admin-analytics/admin-analyst-tests.override.yml')]
         if args.browser:

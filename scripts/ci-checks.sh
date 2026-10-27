@@ -48,7 +48,7 @@ verify_services() {
   for service in postgres auth-db auth-server; do wait_healthy "$service"; done
   # Probe Spring from a peer on the CI network, without adding curl to the Java image.
   wait_http backend 'Trading API and database' bash scripts/ci-compose.sh exec -T auth-server node -e \
-    "fetch('http://backend:8082/actuator/health/readiness', {signal: AbortSignal.timeout(5000)}).then(async r => process.exit(r.ok && (await r.json()).status === 'UP' ? 0 : 1)).catch(() => process.exit(1))"
+    "fetch('http://backend:8080/actuator/health/readiness', {signal: AbortSignal.timeout(5000)}).then(async r => process.exit(r.ok && (await r.json()).status === 'UP' ? 0 : 1)).catch(() => process.exit(1))"
   wait_http frontend 'Client HTML through Nginx' bash scripts/ci-compose.sh exec -T frontend \
     wget -q -T 5 -O /dev/null http://127.0.0.1/index.html
 }

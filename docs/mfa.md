@@ -24,10 +24,10 @@ bash scripts/start-project.sh --all
 Startup applies `DB/auth_db.schema.sql` to existing auth storage before rebuilding.
 It adds MFA/reset tables and `users.mfa_required`. It revokes password-only sessions
 only for opted-in, enrolled or staff identities. A plain
-`docker-compose up` does not migrate existing storage. Both Java services must be
+`docker compose up` does not migrate existing storage. Both Java services must be
 rebuilt too: the trading API accepts signed `amr: ["pwd"]` only for a CLIENT with
 explicit `mfa_required: false`; staff access still requires `pwd` and `mfa`.
-Legacy JWTs without that claim are rejected. Keep using `docker-compose` on older VMs;
+Legacy JWTs without that claim are rejected. Use the `docker compose` plugin on VMs;
 no `--quiet` or `--wait` option is needed. Missing encryption configuration fails
 closed for enrollment and MFA-required accounts.
 
@@ -118,7 +118,7 @@ Rules:
 - **The seed only runs on a new auth volume.** On an existing one, apply it once (it is safe to repeat), then restart auth-server:
 
   ```bash
-  docker-compose exec -T auth-db sh -c 'psql -X -q -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -d "$POSTGRES_DB"' < DB/auth_db_test_data.sql
+  docker compose exec -T auth-db sh -c 'psql -X -q -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -d "$POSTGRES_DB"' < DB/auth_db_test_data.sql
   ```
 - **Temporary.** `auth-server/src/auth/dev-mfa-bypass.ts` lists everything to delete when it goes.
 

@@ -12,7 +12,7 @@ WORKDIR /app
 COPY --from=builder /app/target/Endgame-0.0.1-SNAPSHOT.jar app.jar
 
 # Expose the port
-EXPOSE 8082
+EXPOSE 8080
 
 # Compose injects credentials/configuration at runtime; no .env is baked into the image.
 ENTRYPOINT ["java", "-jar", "app.jar"]

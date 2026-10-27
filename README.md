@@ -48,8 +48,10 @@ To shut down the app:
 ## Local setup and catalogue changes
 
 Copy `.env.example` to `.env` and supply database credentials, a shared JWT secret
-and the pricing API key. Start the stack with `docker-compose up -d --build` and
-open `http://localhost:8084`. Use `docker-compose.yml`; `new-compose.yml` is obsolete.
+and the pricing API key. Start the stack with `docker compose up -d --build` and
+open `http://localhost:8084`. Auth listens on port 3000, the trading/orders API on
+8080, and the trading PostgreSQL database on 5432. Install the Docker Compose plugin
+to run these commands. Use `docker-compose.yml`; `new-compose.yml` is obsolete.
 
 The instrument catalogue source is `DB/instruments.seed.sql`. After editing it, run:
 

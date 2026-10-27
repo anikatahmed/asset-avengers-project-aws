@@ -8,7 +8,7 @@ bash scripts/load-demo-data.sh
 ```
 
 The loader is opt-in development data; normal startup still creates no funded
-portfolios. It uses `docker-compose` without newer quiet/wait flags. Start the
+portfolios. It uses `docker compose` without newer quiet/wait flags. Start the
 full project, including publisher, consumer and reporting-job, before loading.
 It preserves existing data and does not stop the project or delete volumes.
 

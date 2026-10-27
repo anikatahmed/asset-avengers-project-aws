@@ -19,7 +19,7 @@ STATE_DIR="$ROOT/.ci"
 RECEIPT="$STATE_DIR/$CI_PROJECT_NAME.initialized"
 # Normal Jenkins runs use the root .env; isolated verification may supply a temp fixture.
 ENV_FILE="${CI_ENV_FILE:-$ROOT/.env}"
-COMPOSE=(docker-compose --env-file "$ENV_FILE" -p "$CI_PROJECT_NAME" -f "$CI_COMPOSE_FILE")
+COMPOSE=(docker compose --env-file "$ENV_FILE" -p "$CI_PROJECT_NAME" -f "$CI_COMPOSE_FILE")
 if [[ "$ACTION" == init ]]; then
   [[ $# -eq 1 ]] || { echo 'init takes no additional arguments' >&2; exit 1; }
   [[ -f "$ENV_FILE" ]] || { echo 'Missing CI environment file' >&2; exit 1; }

@@ -9,7 +9,7 @@ tools running outside Docker. Containers use service names and port 5432.
 | Database | Docker service / host port | Writer | Readers and purpose |
 |---|---|---|---|
 | `auth` | `auth-db` / 5433 | Nest auth service | Auth repositories validate credentials, sessions and token rotation |
-| `Endgame_Trading` | `postgres` / 8083 | Trading API; SQL triggers; publisher marks outbox delivery | Trading JPA repositories and publisher snapshots/outbox |
+| `Endgame_Trading` | `postgres` / 5432 | Trading API; SQL triggers; publisher marks outbox delivery | Trading JPA repositories and publisher snapshots/outbox |
 | `admin_analytics` | `reporting-db` / 5434 | Consumer, report job; internal API appends view audits; initializer registers dashboards | Internal API investigates clients/orders; Superset reads approved views |
 | `superset_metadata` | Same reporting PostgreSQL instance | Superset migrations, initializer and web app | Superset manages its users, chart definitions, dashboard layouts and permissions |
 

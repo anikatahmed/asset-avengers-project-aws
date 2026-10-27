@@ -9,7 +9,7 @@ services:
     container_name: endgame_backend
     restart: unless-stopped
     ports:
-      - "8082:8082"
+      - "8080:8080"
     environment:
       - DB_URL=jdbc:postgresql://postgres:5432/${POSTGRES_DB:-Endgame_Trading}
       - DB_USERNAME=${DB_USERNAME}
@@ -109,7 +109,7 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD:?set DB_PASSWORD in .env}
       POSTGRES_DB: ${POSTGRES_DB:-Endgame_Trading}
     ports:
-      - "8083:5432"
+      - "5432:5432"
     volumes:
       - ~/.asset_postgres_test_data:/var/lib/postgresql
       - ./DB/endgame_db.schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro

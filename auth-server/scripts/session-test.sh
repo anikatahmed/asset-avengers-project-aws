@@ -33,7 +33,7 @@ token_body() { printf '{"refreshToken":"%s"}' "$1"; }
 post() { curl -s -w '\n%{http_code}' -X POST "$AUTH$1" -H 'content-type: application/json' -d "$2"; }
 code() { tail -n1 <<<"$1"; }
 body() { sed '$d' <<<"$1"; }
-sql() { docker-compose -f ../docker-compose.yml --env-file ../.env exec -T auth-db sh -c 'psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -tA -v ON_ERROR_STOP=1' <<<"$1"; }
+sql() { docker compose -f ../docker-compose.yml --env-file ../.env exec -T auth-db sh -c 'psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -tA -v ON_ERROR_STOP=1' <<<"$1"; }
 # The refresh_tokens row for a token, matched the same way the app does: by sha256.
 by_hash() { printf "token_hash = sha256(convert_to('%s', 'UTF8'))" "$1"; }
 session_of() { sql "SELECT session_id FROM refresh_tokens WHERE $(by_hash "$1");"; }

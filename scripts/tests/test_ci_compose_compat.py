@@ -14,7 +14,7 @@ spec.loader.exec_module(verifier)
 
 class ComposeCompatibilityTests(unittest.TestCase):
     def setUp(self):
-        self.command = ['docker-compose', '-p', 'verify-test']
+        self.command = ['docker', 'compose', '-p', 'verify-test']
         self.services = ['reporting-db', 'kafka-init', 'consumer']
         self.states = {
             'reporting-db': {'Status': 'running', 'Health': {'Status': 'healthy'}},
@@ -83,7 +83,7 @@ class ComposeCompatibilityTests(unittest.TestCase):
 
     def test_normal_staff_commands_keep_existing_project_identity(self):
         for name in ('start-project.sh', 'stop-project.sh', 'load-demo-data.sh'):
-            self.assertIn('docker-compose -p asset-avengers-internal --env-file .env',
+            self.assertIn('docker compose -p asset-avengers-internal --env-file .env',
                           (ROOT / 'scripts' / name).read_text())
         override = (ROOT / 'deployment/admin-analytics/admin-analyst-tests.override.yml').read_text()
         self.assertNotIn('!reset', override)

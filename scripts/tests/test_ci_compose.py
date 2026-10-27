@@ -20,7 +20,7 @@ class CiComposeGuardTests(unittest.TestCase):
         self.log = folder / 'calls.jsonl'
         fixture = folder / 'test.env'
         fixture.write_text('TEST_ONLY=1\n')
-        docker = folder / 'docker-compose'
+        docker = folder / 'docker'
         docker.write_text('''#!/usr/bin/env python3
 import json,os,sys
 with open(os.environ['CI_MOCK_LOG'],'a') as log: log.write(json.dumps(sys.argv[1:])+'\\n')
@@ -65,9 +65,9 @@ if 'config' in sys.argv and os.environ.get('CI_MOCK_CONFIG_FAIL')=='1': sys.exit
         calls = self.calls()
         self.assertEqual(len(calls), 3)
         for call in calls:
-            self.assertEqual(call[:6], ['--env-file', self.env['CI_ENV_FILE'], '-p', self.project,
+            self.assertEqual(call[:7], ['compose', '--env-file', self.env['CI_ENV_FILE'], '-p', self.project,
                                        '-f', str(ROOT / 'deployment/ci/ci.compose.yml')])
-        self.assertEqual(calls[-1][6:], ['down', '--volumes', '--remove-orphans'])
+        self.assertEqual(calls[-1][7:], ['down', '--volumes', '--remove-orphans'])
         self.assertFalse(self.receipt.exists())
         self.assertNotEqual(self.run_helper('cleanup').returncode, 0)
         self.assertEqual(len(self.calls()), 3)

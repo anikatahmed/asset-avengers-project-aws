@@ -25,7 +25,7 @@ class BrowserRunnerTests(unittest.TestCase):
                 calls.append((command, kwargs))
                 return subprocess.CompletedProcess(command, 1 if 'inspect' in command else 0)
             with patch.object(verifier, 'ROOT', root), patch.object(verifier.subprocess, 'check_output', return_value='temporary-auth-id'), patch.object(verifier.subprocess, 'run', side_effect=run):
-                verifier.run_auth_browser(['docker-compose', '-p', 'test'], 'test', {})
+                verifier.run_auth_browser(['docker', 'compose', '-p', 'test'], 'test', {})
             container, options = next(call for call in calls if call[0][:2] == ['docker', 'run'])
             self.assertIn('mcr.microsoft.com/playwright:v1.64.1-noble', container)
             self.assertIn('test_internal', container)

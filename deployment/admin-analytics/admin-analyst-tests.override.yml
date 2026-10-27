@@ -29,7 +29,7 @@ services:
   internal-backend:
     environment:
       JAVA_TOOL_OPTIONS: -Xms64m -Xmx384m
-      TRADING_API_URL: http://unavailable-trading-api:8082
+      TRADING_API_URL: http://unavailable-trading-api:8080
 networks:
   trading:
     external: false
