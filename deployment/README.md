@@ -37,3 +37,41 @@ See the [staff setup guide](../docs/admin-analytics/setup.md) for initial config
 and existing-database migration steps. The obsolete root `new-compose.yml` is not
 required. [DB/docker-compose-proddb.yml](../DB/docker-compose-proddb.yml) only
 starts an alternative database; it does not start either full application stack.
+
+## EC2 build runs out of disk space (`ENOSPC`)
+
+Check disk space and inodes on the filesystem storing Docker data:
+
+```bash
+docker info --format '{{.DockerRootDir}}'
+df -h
+df -i
+docker system df
+```
+
+For example, if Docker reports `/var/lib/docker`, check `df -h /var/lib/docker`
+and `df -i /var/lib/docker`. Reclaim unused build cache with:
+
+```bash
+docker builder prune
+```
+
+This prompts before removing unused build cache; subsequent builds may take longer.
+It does not remove database volumes. Avoid `docker system prune --volumes` and
+`docker compose down --volumes` when preserving saved data.
+See [Docker build-cache cleanup](https://docs.docker.com/build/cache/garbage-collection/).
+
+Retry with `bash scripts/start-project.sh --client` for the client/auth/trading
+stack, or `bash scripts/start-project.sh` for both stacks. The helper builds
+services sequentially, including only one build for each shared staff image,
+then starts containers using those images. Direct `docker compose up --build`
+can still build services concurrently. npm caches are cleaned in dependency
+installation layers, and auth installs dependencies once, pruning development
+dependencies after compilation for its runtime image.
+
+These changes reduce build storage pressure but cannot make a full disk usable.
+If cache cleanup is insufficient, increase the EBS volume backing Docker, then
+extend its partition/filesystem as described in the
+[AWS EBS filesystem guide](https://docs.aws.amazon.com/ebs/latest/userguide/recognize-expanded-volume-linux.html).
+Use that guide's commands for the actual device and filesystem reported by
+`lsblk -f` and `df -hT`; device names vary between instances.

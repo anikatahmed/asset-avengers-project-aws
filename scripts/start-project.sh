@@ -60,7 +60,11 @@ if [[ "$MODE" != --staff ]]; then
   docker compose exec -T postgres sh -c 'psql -X -q -v ON_ERROR_STOP=1 --single-transaction -U "$POSTGRES_USER" -d "$POSTGRES_DB"' < DB/endgame_db.schema.sql
   # Seed the catalogue even after recovery; upserts preserve saved instruments and suspensions.
   docker compose exec -T postgres sh -c 'psql -X -q -v ON_ERROR_STOP=1 --single-transaction -U "$POSTGRES_USER" -d "$POSTGRES_DB"' < DB/instruments.seed.sql
-  docker compose up -d --build
+  # Build one service at a time to reduce peak disk usage on small hosts.
+  for service in auth-server backend frontend; do
+    docker compose build "$service"
+  done
+  docker compose up -d --no-build
 fi
 if [[ "$MODE" != --client ]]; then
   # Initialization directories run only once. Apply current idempotent schemas and
@@ -71,7 +75,11 @@ if [[ "$MODE" != --client ]]; then
   docker compose exec -T postgres sh -c 'psql -X -q -v ON_ERROR_STOP=1 --single-transaction -U "$POSTGRES_USER" -d "$POSTGRES_DB"' < DB/endgame_db.schema.sql
   "${STAFF[@]}" exec -T reporting-db sh -c 'psql -X -q -v ON_ERROR_STOP=1 --single-transaction -U "$POSTGRES_USER" -d "$POSTGRES_DB"' < DB/admin_analytics_db.schema.sql
   "${STAFF[@]}" exec -T reporting-db sh -c 'psql -X -q -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -d "$POSTGRES_DB" -f /docker-entrypoint-initdb.d/02-logins.sql'
-  "${STAFF[@]}" up -d --build
+  # Shared image tags let subsequent pipeline/Superset services reuse these builds.
+  for service in internal-frontend publisher internal-backend superset; do
+    "${STAFF[@]}" build "$service"
+  done
+  "${STAFF[@]}" up -d --no-build
 fi
 if [[ "$MODE" != --staff ]]; then echo 'Client app: http://localhost:8084'; fi
 if [[ "$MODE" != --client ]]; then
