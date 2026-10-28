@@ -7,7 +7,7 @@ cd "$ROOT"
 # A secret's name and region are not credentials. Override both to use a different secret.
 SECRET_ID="${ENV_SECRET_ID:-matrix/production/credentials}"
 SECRET_REGION="${ENV_SECRET_REGION:-us-east-1}"
-for tool in aws jq; do
+for tool in aws jq curl; do
   command -v "$tool" >/dev/null || { echo "$tool is required to fetch .env from AWS Secrets Manager." >&2; exit 1; }
 done
 umask 077
@@ -18,7 +18,15 @@ if [[ -f .env ]]; then cp -p .env .env.previous; fi
 printf '%s' "$secret" | jq -r --arg q "'" 'to_entries[]
   | .value |= tostring
   | if (.value | contains("\\")) then error("\(.key) contains a backslash") else . end
+  | if (.value | test("FILL_IN|YOUR-")) then error("\(.key) still has a placeholder value") else . end
   | "\(.key)=\($q)\(.value | gsub($q; "\\" + $q))\($q)"' > .env.tmp
+# Auth verifies the RDS server certificate. AWS publishes the CA bundle, so it is not a secret.
+# Use the regional bundle: the global one exceeds Linux's 128 KB limit for one environment variable.
+if ! grep -q '^AUTH_DB_SSL_CA=' .env.tmp; then
+  ca=$(curl -fsS --max-time 20 "https://truststore.pki.rds.amazonaws.com/$SECRET_REGION/$SECRET_REGION-bundle.pem")
+  [[ "$ca" == -----BEGIN\ CERTIFICATE-----* ]] || { echo 'Downloaded RDS CA bundle is not a PEM certificate.' >&2; exit 1; }
+  printf "AUTH_DB_SSL_CA='%s'\n" "$ca" >> .env.tmp
+fi
 mv .env.tmp .env
 # Compose defaults these to empty, so a missing key would only fail later at runtime.
 for key in MFA_ENCRYPTION_KEY SUPERSET_SSO_SECRET RESEND_API_KEY; do

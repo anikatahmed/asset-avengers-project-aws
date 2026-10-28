@@ -45,9 +45,10 @@ All database ports default to 5432. Keep RDS private and allow its security grou
 to receive PostgreSQL connections from the EC2 application's security group.
 
 JDBC and Python connections default to encrypted connections (`sslmode=require` /
-`PGSSLMODE=require`). Auth verifies the server certificate; supply the current
+`PGSSLMODE=require`). Auth verifies the server certificate against the
 [AWS RDS CA bundle](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/UsingWithRDS.SSL.html)
-as `AUTH_DB_SSL_CA`, using a single-quoted multiline PEM value in `.env`:
+in `AUTH_DB_SSL_CA`. `scripts/fetch-env-aws.sh` downloads the regional bundle unless the
+secret sets `AUTH_DB_SSL_CA`. A hand-written `.env` uses a single-quoted multiline PEM value:
 
 ```dotenv
 AUTH_DB_SSL=true

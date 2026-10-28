@@ -12,16 +12,21 @@ SECRET = {'JWT_SECRET': "fixture'quoted$secret", 'AUTH_DB_SSL_CA': 'line one\nli
           'MFA_ENCRYPTION_KEY': 'k', 'SUPERSET_SSO_SECRET': 's', 'RESEND_API_KEY': 'r'}
 
 
-def fetch(folder, secret, aws_fails=False):
+CA = '-----BEGIN CERTIFICATE-----\nfixture\n-----END CERTIFICATE-----'
+
+
+def fetch(folder, secret, aws_fails=False, curl_fails=False):
     (folder / 'scripts').mkdir(exist_ok=True)
     shutil.copy(ROOT / 'scripts/fetch-env-aws.sh', folder / 'scripts')
     (folder / 'bin').mkdir(exist_ok=True)
-    aws = folder / 'bin/aws'
-    aws.write_text('#!/usr/bin/env bash\n' + ('exit 254\n' if aws_fails else 'cat "$SECRET_FIXTURE"\n'))
-    aws.chmod(0o755)
+    stubs = {'aws': 'exit 254' if aws_fails else 'cat "$SECRET_FIXTURE"',
+             'curl': 'exit 22' if curl_fails else f'echo "$*" > "$CURL_LOG"; printf %s "{CA}"'}
+    for name, body in stubs.items():
+        (folder / 'bin' / name).write_text(f'#!/usr/bin/env bash\n{body}\n')
+        (folder / 'bin' / name).chmod(0o755)
     (folder / 'secret.json').write_text(json.dumps(secret))
     env = {**os.environ, 'PATH': f"{folder / 'bin'}{os.pathsep}{os.environ['PATH']}",
-           'SECRET_FIXTURE': str(folder / 'secret.json')}
+           'SECRET_FIXTURE': str(folder / 'secret.json'), 'CURL_LOG': str(folder / 'curl.log')}
     return subprocess.run(['bash', str(folder / 'scripts/fetch-env-aws.sh')],
                           env=env, capture_output=True, text=True)
 
@@ -58,6 +63,30 @@ class FetchEnvTests(unittest.TestCase):
             self.assertNotEqual(result.returncode, 0)
             self.assertIn('DB_PASSWORD contains a backslash', result.stderr)
             self.assertFalse((folder / '.env').exists())
+
+    def test_placeholder_value_is_refused(self):
+        with tempfile.TemporaryDirectory() as directory:
+            folder = Path(directory)
+            result = fetch(folder, {**SECRET, 'AUTH_DB_HOST': 'FILL_IN_RDS_ENDPOINT'})
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn('AUTH_DB_HOST still has a placeholder value', result.stderr)
+            self.assertFalse((folder / '.env').exists())
+
+    def test_downloads_regional_rds_ca_when_secret_has_none(self):
+        with tempfile.TemporaryDirectory() as directory:
+            folder = Path(directory)
+            result = fetch(folder, {'JWT_SECRET': 'x'})
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertIn('/us-east-1/us-east-1-bundle.pem', (folder / 'curl.log').read_text())
+            self.assertIn(f"AUTH_DB_SSL_CA='{CA}'\n", (folder / '.env').read_text())
+
+    def test_failed_ca_download_keeps_existing_env(self):
+        with tempfile.TemporaryDirectory() as directory:
+            folder = Path(directory)
+            (folder / '.env').write_text('KEEP=1\n')
+            result = fetch(folder, {'JWT_SECRET': 'x'}, curl_fails=True)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertEqual((folder / '.env').read_text(), 'KEEP=1\n')
 
     def test_missing_feature_keys_warn(self):
         with tempfile.TemporaryDirectory() as directory:
