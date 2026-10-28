@@ -16,7 +16,7 @@ if [[ $# -ne 0 ]]; then
   exit 1
 fi
 if [[ ! -f .env ]]; then
-  echo 'Missing root .env. Restore it so Compose can identify the configured project.' >&2
+  echo 'Missing root .env. Recreate it with: bash scripts/fetch-env-aws.sh' >&2
   exit 1
 fi
 if ! docker info >/dev/null 2>&1; then

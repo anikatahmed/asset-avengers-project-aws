@@ -9,7 +9,7 @@ case "$MODE" in
   --help|-h)
     echo 'Usage: bash scripts/start-project.sh [--all|--client|--staff]'
     echo 'Default: --all. Start --client before using --staff by itself.'
-    echo 'Configure the single root .env from .env.example before starting.'
+    echo 'Writes root .env from AWS Secrets Manager first (scripts/fetch-env-aws.sh).'
     echo 'Prepare RDS databases and schemas first; see deployment/aws-runtime.md.'
     exit 0 ;;
   *) echo 'Usage: bash scripts/start-project.sh [--all|--client|--staff]' >&2; exit 1 ;;
@@ -17,10 +17,8 @@ esac
 if [[ $# -gt 1 ]]; then
   echo 'Choose one option: --all, --client or --staff.' >&2; exit 1
 fi
-if [[ ! -f .env ]]; then
-  echo 'Missing .env. Copy .env.example to .env and fill its credentials and API key.' >&2
-  exit 1
-fi
+# Refresh .env from AWS Secrets Manager so every start uses the current secrets.
+bash scripts/fetch-env-aws.sh
 if ! docker info >/dev/null 2>&1; then
   echo 'Docker is unavailable. Start Docker Desktop and try again.' >&2; exit 1
 fi

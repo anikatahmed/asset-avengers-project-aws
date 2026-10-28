@@ -34,8 +34,11 @@ Normal startup no longer creates databases, schemas or logins. `superset-init` s
 runs Superset metadata migrations and dashboard bootstrap, so its migration login
 needs reporting registry write permissions. It must not be the ordinary reader login.
 
-Copy `.env.example` to `.env`. Replace every `YOUR-RDS-ENDPOINT` with the actual DNS
-endpoint, fill all credentials and supply the public frontend/Superset URLs.
+On EC2, `start-project.sh` writes `.env` from the AWS Secrets Manager secret named in
+`scripts/fetch-env-aws.sh`; the instance's IAM role needs `secretsmanager:GetSecretValue`
+on it. Store the keys from `.env.example` in that secret as one JSON object. Replace every
+`YOUR-RDS-ENDPOINT` with the actual DNS endpoint, fill all credentials and supply the
+public frontend/Superset URLs.
 `DB_URL` and `ADMIN_DB_URL` are complete JDBC URLs. `SOURCE_DB_HOST`, `AUTH_DB_HOST`,
 `ADMIN_DB_HOST` and `SUPERSET_METADATA_HOST` are DNS hostnames without URL schemes.
 All database ports default to 5432. Keep RDS private and allow its security group
