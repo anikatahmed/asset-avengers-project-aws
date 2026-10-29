@@ -358,6 +358,48 @@ describe('Portfolio quote selection', () => {
     }
   });
 
+  it('does not count an unpriced $5000 purchase as a loss and preserves its last quote', () => {
+    http.expectOne('/api/v1/bank-accounts/trading-account').flush(snapshot);
+    TestBed.inject(AccountApiService).accounts.set([{
+      accountId: TEST_ACCOUNT_ID, accountName: 'Brokerage', accountType: 'Individual Brokerage',
+      cashBalance: 5000, suspended: false, deactivated: false, updatedAt: '2026-10-29T12:00:00Z',
+    }]);
+    const purchased = { ...snapshot, cashBalance: 5000, availableCash: 5000,
+      holdings: [{ instrumentId: 'msft', symbol: 'MSFT', name: 'Microsoft', quantity: 10, averageCost: 500 }] };
+    store.refreshAggregatePortfolio();
+    http.expectOne(request => request.params.get('accountId') === TEST_ACCOUNT_ID).flush(purchased);
+    expect(store.aggregateHoldings()).toHaveLength(1);
+    expect(store.aggregateValuationReady()).toBe(false);
+    expect(store.aggregateTotalReturn()).toBe(0);
+    http.expectOne(`${quoteUrl}MSFT`).flush({ price: 505, stale: false });
+    expect(store.aggregateValuationReady()).toBe(true);
+    expect(store.aggregateTotalReturn()).toBe(50);
+    store.refreshAggregatePortfolio();
+    http.expectOne(request => request.params.get('accountId') === TEST_ACCOUNT_ID).flush(purchased);
+    expect(store.aggregateHoldings()[0].price).toBe(505);
+    expect(store.aggregateTotalReturn()).toBe(50);
+    http.match(request => request.url.startsWith(quoteUrl)).forEach(request =>
+      request.flush({}, { status: 503, statusText: 'Unavailable' }));
+    expect(store.aggregateTotalReturn()).toBe(50);
+  });
+
+  it('refreshes overview holdings when an asynchronous trade fills after submission', () => {
+    http.expectOne('/api/v1/bank-accounts/trading-account').flush(snapshot);
+    TestBed.inject(AccountApiService).accounts.set([{
+      accountId: TEST_ACCOUNT_ID, accountName: 'Brokerage', accountType: 'Individual Brokerage',
+      cashBalance: 1000, suspended: false, deactivated: false, updatedAt: '2026-10-29T12:00:00Z',
+    }]);
+    const updates = store.liveUpdates().subscribe();
+    try {
+      vi.advanceTimersByTime(1000);
+      http.expectOne(request => request.params.get('accountId') === TEST_ACCOUNT_ID).flush(snapshot);
+      http.expectOne(request => request.params.get('accountId') === TEST_ACCOUNT_ID).flush({ ...snapshot,
+        holdings: [{ instrumentId: 'msft', symbol: 'MSFT', name: 'Microsoft', quantity: 1, averageCost: 100 }] });
+      expect(store.aggregateHoldings().map(position => position.symbol)).toEqual(['MSFT']);
+      flushQuotes(['MSFT']);
+    } finally { updates.unsubscribe(); }
+  });
+
   it('does not duplicate in-flight requests and stops quoting positions after they are removed', () => {
     http.expectOne('/api/v1/bank-accounts/trading-account').flush(snapshot);
     store.aggregateAssets.set([asset('MSFT')]);
