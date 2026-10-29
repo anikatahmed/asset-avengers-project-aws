@@ -72,6 +72,7 @@ references from Secrets Manager.
 
 ## Documentation
 
+- [How we moved Asset Avengers to AWS: architecture, problems and fixes](docs/asset-avengers-cloud-deployment-story.md)
 - [AWS operations](deployment/aws-runtime.md)
 - [Project guide](docs/project-guide.md) and [code map](docs/code-map.md)
 - [Design decisions](docs/design-decisions.md)
