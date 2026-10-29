@@ -1,7 +1,10 @@
-import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
+import { Inject, Injectable, Optional, UnauthorizedException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import pg from 'pg';
+import type { Env } from '../config/env.js';
 import { PG_POOL } from '../database/database.module.js';
 import { requiresMfa } from './access-policy.js';
+import { DEV_MFA_BYPASS_ACCOUNTS } from './dev-mfa-bypass.js';
 
 // One row per login. Many sessions per user are allowed (phone + laptop).
 export interface Session {
@@ -42,7 +45,10 @@ const toSession = (row: SessionRow): Session => ({
 // database can't be turned into working sessions.
 @Injectable()
 export class SessionsRepository {
-  constructor(@Inject(PG_POOL) private readonly db: pg.Pool) {}
+  constructor(
+    @Inject(PG_POOL) private readonly db: pg.Pool,
+    @Optional() private readonly config?: ConfigService<Env, true>,
+  ) {}
 
   // Starts a session and stores its first refresh token, atomically.
   async create(
@@ -58,7 +64,7 @@ export class SessionsRepository {
       // Recheck policy and credentials under the enrollment/reset lock: concurrent
       // setup or password changes must not leave a password-only login usable.
       const identity = (await client.query(
-        'SELECT password_hash, roles, mfa_required, disabled_at, password_change_required FROM users WHERE id=$1 FOR UPDATE', [userId],
+        'SELECT email, password_hash, roles, mfa_required, disabled_at, password_change_required FROM users WHERE id=$1 FOR UPDATE', [userId],
       )).rows[0];
       if (!identity || (expectedPasswordHash && identity.password_hash !== expectedPasswordHash))
         throw new UnauthorizedException('Credentials changed. Sign in again.');
@@ -73,8 +79,12 @@ export class SessionsRepository {
       const enrolled = !!enabled.rows[0]?.enabled_at;
       // Last line of defence for every login path; uses the row re-read under the lock.
       const required = enrolled || requiresMfa({ roles: identity.roles, mfaRequired: identity.mfa_required });
-      // No password-only session if MFA is required; no MFA proof without an authenticator.
-      if ((required && !mfaVerified) || (mfaVerified && !enrolled))
+      // Match login's explicit dev exception using the identity re-read under the lock.
+      // Missing configuration fails closed. Password/disabled/temporary-password checks above
+      // still apply, and required MFA can never produce a password-only session.
+      const devBypass = this.config?.get('DEV_MFA_BYPASS', { infer: true }) === true
+        && DEV_MFA_BYPASS_ACCOUNTS.includes(identity.email);
+      if ((required && !mfaVerified) || (mfaVerified && !enrolled && !devBypass))
         throw new UnauthorizedException('MFA verification is required');
       const { rows } = await client.query<SessionRow>(
         `INSERT INTO sessions (user_id, idle_expires_at, absolute_expires_at, mfa_verified_at) VALUES ($1, $2, $3, CASE WHEN $4 THEN now() ELSE NULL END)

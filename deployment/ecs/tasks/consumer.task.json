@@ -1,0 +1,81 @@
+{
+  "executionRoleArn": "arn:aws:iam::314662805698:role/asset-avengers-ecs-execution",
+  "taskRoleArn": "arn:aws:iam::314662805698:role/asset-avengers-ecs-task",
+  "requiresCompatibilities": [
+    "EC2"
+  ],
+  "networkMode": "bridge",
+  "tags": [
+    {
+      "key": "project",
+      "value": "asset-avengers"
+    }
+  ],
+  "family": "asset-avengers-consumer",
+  "containerDefinitions": [
+    {
+      "name": "consumer",
+      "image": "314662805698.dkr.ecr.us-east-1.amazonaws.com/asset-avengers/reporting-pipeline@sha256:9bcce95c4f80029c64585b944f93aa75fd349ff7c7b4bdec3d59603ade16b3fe",
+      "essential": true,
+      "cpu": 64,
+      "memoryReservation": 128,
+      "memory": 256,
+      "command": [
+        "consumer"
+      ],
+      "secrets": [
+        {
+          "name": "REPORTING_DB_HOST",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:314662805698:secret:matrix/production/credentials-cn8vMu:ADMIN_DB_HOST::"
+        },
+        {
+          "name": "REPORTING_DB_NAME",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:314662805698:secret:matrix/production/credentials-cn8vMu:ADMIN_DB_NAME::"
+        },
+        {
+          "name": "REPORTING_DB_USER",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:314662805698:secret:matrix/production/credentials-cn8vMu:ETL_DB_USERNAME::"
+        },
+        {
+          "name": "REPORTING_DB_PASSWORD",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:314662805698:secret:matrix/production/credentials-cn8vMu:ETL_DB_PASSWORD::"
+        }
+      ],
+      "environment": [
+        {
+          "name": "PGSSLMODE",
+          "value": "require"
+        },
+        {
+          "name": "KAFKA_BOOTSTRAP_SERVERS",
+          "value": "10.200.1.118:9092"
+        },
+        {
+          "name": "KAFKA_TOPIC",
+          "value": "trading-audit-v1"
+        }
+      ],
+      "healthCheck": {
+        "command": [
+          "CMD",
+          "python",
+          "-c",
+          "import pipeline; c=pipeline.connect(False); assert c.execute('SELECT 1').fetchone()[0]==1; c.close(); from confluent_kafka.admin import AdminClient; assert 'trading-audit-v1' in AdminClient({'bootstrap.servers':'10.200.1.118:9092'}).list_topics(timeout=5).topics"
+        ],
+        "interval": 30,
+        "timeout": 15,
+        "retries": 3,
+        "startPeriod": 30
+      },
+      "stopTimeout": 60,
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/asset-avengers",
+          "awslogs-region": "us-east-1",
+          "awslogs-stream-prefix": "service"
+        }
+      }
+    }
+  ]
+}

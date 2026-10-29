@@ -1,4 +1,4 @@
-> AWS deployment now uses RDS and S3/CloudFront. See the [current runtime guide](../aws-runtime.md); local container startup instructions below are historical.
+> AWS deployment now uses ECS on EC2, RDS and S3/CloudFront. See the [current runtime guide](../aws-runtime.md); local container startup instructions below are historical.
 
 # Admin and analyst Docker Compose stack
 

@@ -1,0 +1,36 @@
+{
+  "date": "2026-10-29",
+  "scanner": "Trivy 0.76.1",
+  "deployment_performed": false,
+  "changes": {
+    "tomcat": "11.0.27",
+    "jackson_2": "2.21.7",
+    "jackson_3": "3.1.7"
+  },
+  "services": {
+    "trading-api": {
+      "image_id": "sha256:a9e72d1988b602c89dcfb3d591a4b169f3712f6f14f366b724f77333efe75927",
+      "severity_counts": {
+        "MEDIUM": 44,
+        "LOW": 4
+      },
+      "tests_total": 276,
+      "tests_skipped": 9,
+      "tests_failed": 0,
+      "tests_errors": 0,
+      "build": "Maven package including tests, isolated Docker build; no production environment files"
+    },
+    "staff-api": {
+      "image_id": "sha256:06225e7d1019c43fa12d4c5137edddc4842328d74d4f870b35bedf1b76b30625",
+      "severity_counts": {
+        "MEDIUM": 44,
+        "LOW": 4
+      },
+      "tests_total": 83,
+      "tests_skipped": 6,
+      "tests_failed": 0,
+      "tests_errors": 0,
+      "build": "Maven package including tests, isolated Docker build; no production environment files"
+    }
+  }
+}

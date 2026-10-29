@@ -1,0 +1,19 @@
+{
+  "repository": "asset-avengers/trading-api",
+  "context": "backend",
+  "registry": "314662805698.dkr.ecr.us-east-1.amazonaws.com",
+  "tag": "snapshot-20261029T071318Z-70ae6622f3a2",
+  "local_image": "asset-avengers-trading-api:snapshot-20261029T071318Z-70ae6622f3a2",
+  "image_uri": "314662805698.dkr.ecr.us-east-1.amazonaws.com/asset-avengers/trading-api:snapshot-20261029T071318Z-70ae6622f3a2",
+  "base_commit": "d8c71d7dfd899a571b17ef329b46d7ca091f0da0",
+  "source_sha256": "70ae6622f3a23d155f47cc55b15efb7632c88377175ed2b58c2fdf583013a44f",
+  "uncommitted": true,
+  "project_tag": {
+    "project": "asset-avengers"
+  },
+  "digest": "sha256:ac9643cb6050e5706bbce19f1e92967cf19b91f2140aa688e9427b7452adcffb",
+  "image_bytes": 181095661,
+  "scan_image_digest": "sha256:df46cd22ce4b39c2a0db576697c94532d8236126fe313a3344917ec5dd43d1cc",
+  "scan_status": "COMPLETE",
+  "scan_severity_counts": {}
+}

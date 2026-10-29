@@ -1,0 +1,19 @@
+{
+  "clusterArn": "arn:aws:ecs:us-east-1:314662805698:cluster/asset-avengers",
+  "clusterName": "asset-avengers",
+  "project_tag": {
+    "project": "asset-avengers"
+  },
+  "existing_traffic_changed": true,
+  "compute": "EC2",
+  "ec2_instance": "i-0058f31de51e5c5c8",
+  "container_instance_arn": "arn:aws:ecs:us-east-1:314662805698:container-instance/asset-avengers/fd8eaf4cc1ef4003bd3d95a1f3a7e5d6",
+  "agent_version": "1.108.1",
+  "task_level_resource_limits": false,
+  "reserved_memory_mib": 3072,
+  "public_routing_changed": false,
+  "service_count": 8,
+  "additional_compute_created": false,
+  "task_network_mode": "bridge",
+  "kafka_storage_preserved": true
+}

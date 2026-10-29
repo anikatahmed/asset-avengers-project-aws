@@ -1,4 +1,4 @@
-> AWS deployment now uses RDS and S3/CloudFront. See the [current runtime guide](../deployment/aws-runtime.md); local container startup instructions below are historical.
+> AWS deployment now uses ECS on EC2, RDS and S3/CloudFront. See the [current runtime guide](../deployment/aws-runtime.md); local container startup instructions below are historical.
 
 # Database reference
 
@@ -30,8 +30,6 @@ managed by Superset migrations, not by a hand-written application schema here.
 | `endgame_db_test_data.sql` | Generated copy of the catalogue for legacy setup/test consumers; regenerate from the canonical seed |
 | `admin_analytics_db.schema.sql` | Reporting mirrors, audit facts, report batches, views and capability roles |
 | `admin_analytics_db_test_data.sql` | Standalone reporting fixtures for schema/API tests; normal staff Compose startup does not load them |
-| `admin_analytics_db_app_user.sh` | Older single-login initializer; retained for older setups, replaced in current staff Compose by `deployment/admin-analytics/init-databases.sql` |
-| `docker-compose-proddb.yml` | Separate database-container configuration; does not provision the complete app or apply these schemas automatically |
 
 Initialization SQL runs only when PostgreSQL storage is empty. Restarting a
 container preserves data and does not reapply edited SQL. Use the migration

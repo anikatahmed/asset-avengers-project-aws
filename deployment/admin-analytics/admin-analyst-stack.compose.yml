@@ -32,6 +32,7 @@ x-superset-env: &superset-env
   SUPERSET_REPORTING_USER: ${SUPERSET_REPORTING_USER:-superset_reader}
   SUPERSET_REPORTING_PASSWORD: ${SUPERSET_REPORTING_PASSWORD:?set SUPERSET_REPORTING_PASSWORD}
   SUPERSET_EMBED_ORIGINS: ${SUPERSET_EMBED_ORIGINS:-http://localhost:8086,http://localhost:5174,http://localhost:8084,http://localhost:4200}
+  SUPERSET_COOKIE_SECURE: ${SUPERSET_COOKIE_SECURE:-false}
 
 services:
   kafka:

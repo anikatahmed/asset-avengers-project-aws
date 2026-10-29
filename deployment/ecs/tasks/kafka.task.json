@@ -1,0 +1,124 @@
+{
+  "executionRoleArn": "arn:aws:iam::314662805698:role/asset-avengers-ecs-execution",
+  "taskRoleArn": "arn:aws:iam::314662805698:role/asset-avengers-ecs-task",
+  "requiresCompatibilities": [
+    "EC2"
+  ],
+  "networkMode": "bridge",
+  "tags": [
+    {
+      "key": "project",
+      "value": "asset-avengers"
+    }
+  ],
+  "family": "asset-avengers-kafka",
+  "containerDefinitions": [
+    {
+      "name": "kafka",
+      "image": "314662805698.dkr.ecr.us-east-1.amazonaws.com/asset-avengers/kafka@sha256:24419e1f17906cfb223ef843bc5ddfafac515291da7e4ca2aab9a1514266a2bc",
+      "essential": true,
+      "cpu": 512,
+      "memoryReservation": 1024,
+      "memory": 1536,
+      "environment": [
+        {
+          "name": "KAFKA_NODE_ID",
+          "value": "1"
+        },
+        {
+          "name": "KAFKA_PROCESS_ROLES",
+          "value": "broker,controller"
+        },
+        {
+          "name": "KAFKA_LISTENERS",
+          "value": "PLAINTEXT://:9092,CONTROLLER://:9093"
+        },
+        {
+          "name": "KAFKA_ADVERTISED_LISTENERS",
+          "value": "PLAINTEXT://10.200.1.118:9092"
+        },
+        {
+          "name": "KAFKA_LISTENER_SECURITY_PROTOCOL_MAP",
+          "value": "PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT"
+        },
+        {
+          "name": "KAFKA_CONTROLLER_LISTENER_NAMES",
+          "value": "CONTROLLER"
+        },
+        {
+          "name": "KAFKA_CONTROLLER_QUORUM_VOTERS",
+          "value": "1@localhost:9093"
+        },
+        {
+          "name": "KAFKA_INTER_BROKER_LISTENER_NAME",
+          "value": "PLAINTEXT"
+        },
+        {
+          "name": "KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR",
+          "value": "1"
+        },
+        {
+          "name": "KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR",
+          "value": "1"
+        },
+        {
+          "name": "KAFKA_TRANSACTION_STATE_LOG_MIN_ISR",
+          "value": "1"
+        },
+        {
+          "name": "KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS",
+          "value": "0"
+        },
+        {
+          "name": "KAFKA_LOG_DIRS",
+          "value": "/var/lib/kafka/data"
+        },
+        {
+          "name": "KAFKA_AUTO_CREATE_TOPICS_ENABLE",
+          "value": "false"
+        }
+      ],
+      "portMappings": [
+        {
+          "containerPort": 9092,
+          "hostPort": 9092,
+          "protocol": "tcp"
+        }
+      ],
+      "mountPoints": [
+        {
+          "sourceVolume": "existing-kafka-data",
+          "containerPath": "/var/lib/kafka/data",
+          "readOnly": false
+        }
+      ],
+      "healthCheck": {
+        "command": [
+          "CMD-SHELL",
+          "KAFKA_HEAP_OPTS='-Xms32m -Xmx128m' /opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --list >/dev/null"
+        ],
+        "interval": 30,
+        "timeout": 15,
+        "retries": 3,
+        "startPeriod": 60
+      },
+      "stopTimeout": 120,
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/asset-avengers",
+          "awslogs-region": "us-east-1",
+          "awslogs-stream-prefix": "service"
+        }
+      }
+    }
+  ],
+  "volumes": [
+    {
+      "name": "existing-kafka-data",
+      "host": {
+        "sourcePath": "/var/lib/docker/volumes/asset-avengers-internal_kafka_data/_data"
+      }
+    }
+  ]
+}

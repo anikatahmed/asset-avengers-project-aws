@@ -1,4 +1,4 @@
-> AWS deployment now uses RDS and S3/CloudFront. See the [current runtime guide](../deployment/aws-runtime.md); local container startup instructions below are historical.
+> AWS deployment now uses ECS on EC2, RDS and S3/CloudFront. See the [current runtime guide](../deployment/aws-runtime.md); local container startup instructions below are historical.
 
 # Asset Avengers: how the project works
 
@@ -235,8 +235,8 @@ and prevent staff users from holding client trading accounts.
 The `admin_analytics_db.schema.sql` defines the separate staff reporting store.
 The Kafka/Python pipeline and `internal-backend/` use it; see the
 [staff architecture](admin-analytics/architecture.md).
-`DB/docker-compose-proddb.yml` defines a separate production
-PostgreSQL container; it does not itself install the trading schema.
+Production PostgreSQL runs in RDS. Disposable local database stacks are defined
+under `deployment/ci/` and `deployment/admin-analytics/`.
 
 ### Staff reporting and Superset metadata
 

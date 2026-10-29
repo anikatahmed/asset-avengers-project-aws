@@ -1,0 +1,4 @@
+{
+  "trading-api": "arn:aws:ecs:us-east-1:314662805698:task-definition/asset-avengers-trading-api:2",
+  "staff-api": "arn:aws:ecs:us-east-1:314662805698:task-definition/asset-avengers-staff-api:2"
+}

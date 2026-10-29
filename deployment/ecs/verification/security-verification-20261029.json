@@ -1,0 +1,84 @@
+{
+  "date": "2026-10-29",
+  "scanner": "Trivy 0.76.1; vulnerability scanner only; no ignored findings",
+  "deployment_performed": false,
+  "images": {
+    "auth-candidate": {
+      "image_id": "sha256:baeef7305dbb2fe0911831c50a51ea60a48e82d44d64157f8d4e417c32e02b0a",
+      "severity_counts": {}
+    },
+    "pipeline-final": {
+      "image_id": "sha256:9bcce95c4f80029c64585b944f93aa75fd349ff7c7b4bdec3d59603ade16b3fe",
+      "severity_counts": {}
+    },
+    "superset-before": {
+      "image_id": "sha256:ce13b28eae3885050ad47bd23ebfd9fdafbb3806f11f944698f7c577e2612807",
+      "severity_counts": {
+        "LOW": 1102,
+        "HIGH": 1015,
+        "MEDIUM": 4658,
+        "UNKNOWN": 65,
+        "CRITICAL": 25
+      }
+    },
+    "superset-final": {
+      "image_id": "sha256:45e4d2a513653703dfb1e37125921c56b1a78f826353bf03cdc614d25e1cf108",
+      "severity_counts": {
+        "LOW": 175,
+        "HIGH": 117,
+        "MEDIUM": 191,
+        "CRITICAL": 7,
+        "UNKNOWN": 1
+      }
+    }
+  },
+  "verification": {
+    "auth": "118 tests passed on Alpine; runtime npm audit zero; build passed",
+    "pipeline": "Fresh disposable PostgreSQL integration and Kafka produce/consume passed",
+    "superset": "7 SSO tests passed; dependency consistency checked at build; not approved for deployment"
+  },
+  "superset_remaining_critical": [
+    {
+      "package": "libsqlite3-0",
+      "id": "CVE-2025-7458",
+      "installed": "3.40.1-2+deb12u2",
+      "fixed": null
+    },
+    {
+      "package": "zlib1g",
+      "id": "CVE-2023-45853",
+      "installed": "1:1.2.13.dfsg-1",
+      "fixed": null
+    },
+    {
+      "package": "pillow",
+      "id": "CVE-2026-112393",
+      "installed": "11.3.0",
+      "fixed": "13.0.0"
+    },
+    {
+      "package": "pillow",
+      "id": "CVE-2026-112398",
+      "installed": "11.3.0",
+      "fixed": "13.0.0"
+    },
+    {
+      "package": "pillow",
+      "id": "CVE-2026-112403",
+      "installed": "11.3.0",
+      "fixed": "13.0.0"
+    },
+    {
+      "package": "pillow",
+      "id": "CVE-2026-112900",
+      "installed": "11.3.0",
+      "fixed": "13.0.0"
+    },
+    {
+      "package": "pillow",
+      "id": "CVE-2026-96639",
+      "installed": "11.3.0",
+      "fixed": "13.0.0"
+    }
+  ]
+}

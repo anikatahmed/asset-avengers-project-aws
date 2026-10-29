@@ -1,0 +1,6 @@
+{
+  "kafka": "arn:aws:ecs:us-east-1:314662805698:task-definition/asset-avengers-kafka:3",
+  "publisher": "arn:aws:ecs:us-east-1:314662805698:task-definition/asset-avengers-publisher:1",
+  "consumer": "arn:aws:ecs:us-east-1:314662805698:task-definition/asset-avengers-consumer:1",
+  "reporting-job": "arn:aws:ecs:us-east-1:314662805698:task-definition/asset-avengers-reporting-job:1"
+}

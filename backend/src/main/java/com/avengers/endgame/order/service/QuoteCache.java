@@ -16,6 +16,7 @@ import java.util.Map;
 /** One shared provider observation per symbol/TTL, including searches and trades. */
 @Component
 public class QuoteCache {
+    private static final Duration FAILURE_COOLDOWN = Duration.ofSeconds(30);
     private record Entry(QuoteResponse quote, Instant fetchedAt) {}
     private final PricingApiClient pricing;
     private final Duration ttl;
@@ -72,7 +73,7 @@ public class QuoteCache {
             synchronized (retryAfter) { retry = retryAfter.get(key); }
             if (retry != null && now.isBefore(retry)) {
                 if (entry != null) return fallback(entry.quote());
-                throw new PricingApiException("Pricing is temporarily unavailable. Please try again in a few minutes.");
+                throw new PricingApiException("Pricing is temporarily unavailable. Please try again shortly.");
             }
             if (budget != null && !budget.reserve(interactive)) {
                 if (entry != null) return fallback(entry.quote());
@@ -86,12 +87,12 @@ public class QuoteCache {
                     remember(key, new Entry(fetched, now));
                     synchronized (retryAfter) { retryAfter.remove(key); }
                 } else {
-                    backoff(key, now.plusSeconds(300));
+                    backoff(key, now.plus(FAILURE_COOLDOWN));
                     if (entry != null) return fallback(entry.quote());
                     // Existing validation reports malformed quotes; do not save them.
                 }
             } catch (PricingApiException failure) {
-                Instant until = failure instanceof PricingRateLimitException limited ? limited.retryAt() : now.plusSeconds(300);
+                Instant until = failure instanceof PricingRateLimitException limited ? limited.retryAt() : now.plus(FAILURE_COOLDOWN);
                 if (failure instanceof PricingRateLimitException && budget != null) budget.pauseUntil(until);
                 backoff(key, until);
                 if (entry != null) return fallback(entry.quote());

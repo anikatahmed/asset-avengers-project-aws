@@ -67,6 +67,14 @@ ALTER TABLE accounts ADD COLUMN IF NOT EXISTS deactivated BOOLEAN NOT NULL DEFAU
 
 CREATE INDEX IF NOT EXISTS idx_accounts_user_id ON accounts (user_id);
 
+-- Transaction/order triggers touch this row before Hibernate flushes its account
+-- entity. Restamp every update so a stale entity cannot move updated_at backward
+-- and make the reporting consumer discard a committed balance change.
+DROP TRIGGER IF EXISTS trg_accounts_set_updated_at ON accounts;
+CREATE TRIGGER trg_accounts_set_updated_at
+    BEFORE UPDATE ON accounts
+    FOR EACH ROW EXECUTE FUNCTION set_updated_at();
+
 -- analysts and admins are staff, not traders, and must never hold a trading account
 CREATE OR REPLACE FUNCTION prevent_staff_account()
 RETURNS TRIGGER AS $$

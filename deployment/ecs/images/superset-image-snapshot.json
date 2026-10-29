@@ -1,0 +1,27 @@
+{
+  "repository": "asset-avengers/superset",
+  "context": "admin-analytics/superset",
+  "registry": "314662805698.dkr.ecr.us-east-1.amazonaws.com",
+  "tag": "security-20261029T103048Z-9f0a0190ce57",
+  "local_image": "asset-avengers-security-superset:deployment-6.0.0",
+  "image_uri": "314662805698.dkr.ecr.us-east-1.amazonaws.com/asset-avengers/superset:security-20261029T103048Z-9f0a0190ce57",
+  "digest": "sha256:55db4d2c900eb42a570023889e9ad08f7782e518e4b85cbec827ed436d06e673",
+  "scan_image_digest": "sha256:9b84cc909f3542523d659d204edaea74db5471f7a760c1f295c2fc53ca4e28ea",
+  "image_bytes": 314422477,
+  "base_commit": "d8c71d7dfd899a571b17ef329b46d7ca091f0da0",
+  "source_sha256": "9f0a0190ce57b82dfbb6514dd7a186ef1f48e009ad57d8671c68396cea427e48",
+  "uncommitted": true,
+  "project_tag": {
+    "project": "asset-avengers"
+  },
+  "trivy_version": "0.76.1",
+  "trivy_severity_counts": {
+    "LOW": 175,
+    "HIGH": 117,
+    "MEDIUM": 191,
+    "CRITICAL": 7,
+    "UNKNOWN": 1
+  },
+  "trivy_report_image_id": "sha256:55db4d2c900eb42a570023889e9ad08f7782e518e4b85cbec827ed436d06e673",
+  "scan_status": "PENDING"
+}

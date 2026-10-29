@@ -1,0 +1,22 @@
+{
+  "tag": "snapshot-20261029T070026Z-a0c027f7f1a2",
+  "local_image": "asset-avengers-auth:snapshot-20261029T070026Z-a0c027f7f1a2",
+  "repository": "asset-avengers/auth",
+  "registry": "314662805698.dkr.ecr.us-east-1.amazonaws.com",
+  "base_commit": "d8c71d7dfd899a571b17ef329b46d7ca091f0da0",
+  "source_sha256": "a0c027f7f1a2d5db8b2a0c5e8236c9dd9a4d8fc2327dae27ca8dcd3bdaba532f",
+  "uncommitted": true,
+  "image_uri": "314662805698.dkr.ecr.us-east-1.amazonaws.com/asset-avengers/auth:snapshot-20261029T070026Z-a0c027f7f1a2",
+  "digest": "sha256:7c892fa7e2ae8bdd93df445e2fd1d8c1278ae09d7db8673c9af7ccd745b53f1b",
+  "image_bytes": 99155718,
+  "scan_image_digest": "sha256:cbc285cb4c6f68b8ace574b6945cf0dac59c5030244c55b3667955a1f3c3a7a4",
+  "scan_status": "COMPLETE",
+  "scan_severity_counts": {
+    "HIGH": 7,
+    "MEDIUM": 2,
+    "LOW": 2
+  },
+  "project_tag": {
+    "project": "asset-avengers"
+  }
+}

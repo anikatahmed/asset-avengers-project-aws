@@ -1,0 +1,122 @@
+{
+  "browser": {
+    "testedAt": "2026-10-29T10:55:51.642Z",
+    "authenticated": false,
+    "results": [
+      {
+        "name": "client",
+        "status": 200,
+        "finalPath": "/login",
+        "title": "Log in | Endgame",
+        "loginFormVisible": true,
+        "javascriptErrors": [],
+        "failedApplicationRequests": [],
+        "scriptsLoaded": 1,
+        "mobileLoginFormVisible": true,
+        "mobileHorizontalOverflow": false
+      },
+      {
+        "name": "admin",
+        "status": 200,
+        "finalPath": "/admin",
+        "title": "Ultron \u00b7 Admin login",
+        "loginFormVisible": true,
+        "javascriptErrors": [],
+        "failedApplicationRequests": [],
+        "scriptsLoaded": 1,
+        "mobileLoginFormVisible": true,
+        "mobileHorizontalOverflow": false
+      },
+      {
+        "name": "analyst",
+        "status": 200,
+        "finalPath": "/analyst",
+        "title": "J.A.R.V.I.S. \u00b7 Analyst login",
+        "loginFormVisible": true,
+        "javascriptErrors": [],
+        "failedApplicationRequests": [],
+        "scriptsLoaded": 1,
+        "mobileLoginFormVisible": true,
+        "mobileHorizontalOverflow": false
+      },
+      {
+        "name": "superset",
+        "status": 200,
+        "finalPath": "/login/",
+        "title": "",
+        "loginFormVisible": true,
+        "javascriptErrors": [],
+        "failedApplicationRequests": [],
+        "scriptsLoaded": 20
+      },
+      {
+        "name": "client-protected",
+        "status": 200,
+        "finalPath": "/login",
+        "title": "Log in | Endgame",
+        "loginFormVisible": true,
+        "javascriptErrors": [],
+        "failedApplicationRequests": [],
+        "scriptsLoaded": 1
+      },
+      {
+        "name": "admin-deep-link",
+        "status": 200,
+        "finalPath": "/admin/clients",
+        "title": "Ultron \u00b7 Admin login",
+        "loginFormVisible": true,
+        "javascriptErrors": [],
+        "failedApplicationRequests": [],
+        "scriptsLoaded": 1
+      },
+      {
+        "name": "analyst-deep-link",
+        "status": 200,
+        "finalPath": "/analyst/reports",
+        "title": "J.A.R.V.I.S. \u00b7 Analyst login",
+        "loginFormVisible": true,
+        "javascriptErrors": [],
+        "failedApplicationRequests": [],
+        "scriptsLoaded": 1
+      }
+    ]
+  },
+  "read_only_data_checks": {
+    "publisher": {
+      "catalogue_symbols": [
+        [
+          "AAPL",
+          true
+        ],
+        [
+          "SPY",
+          true
+        ],
+        [
+          "VOO",
+          true
+        ],
+        [
+          "WMT",
+          true
+        ]
+      ],
+      "pending_outbox_events": 0
+    },
+    "consumer": {
+      "heartbeat_age_seconds": 2.463653
+    },
+    "superset": {
+      "reporting_reader_query_passed": true,
+      "published_trade_count": 5
+    }
+  },
+  "services": "8 steady ECS services verified",
+  "recent_error_logs": "No ERROR-level events in the inspected three-minute window",
+  "ecs_agent": "systemd enabled and active",
+  "limits": [
+    "No authenticated user login or SSO handoff",
+    "No orders, money transfers, account changes or email requests",
+    "No EC2 reboot test"
+  ]
+}

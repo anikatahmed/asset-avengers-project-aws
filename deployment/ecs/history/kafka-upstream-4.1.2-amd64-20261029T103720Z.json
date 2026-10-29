@@ -1,0 +1,14 @@
+{
+  "image": "314662805698.dkr.ecr.us-east-1.amazonaws.com/asset-avengers/kafka@sha256:d50ab7b5df612b3c303f9d8afe8fee59626a5de798addfd626fe1924e3205965",
+  "volume": "asset-avengers-internal_kafka_data",
+  "data_path": "/var/lib/docker/volumes/asset-avengers-internal_kafka_data/_data",
+  "version": "4.1.2",
+  "upstream_image": "apache/kafka@sha256:5cc2a2fd93fa2687b44015eee04fb2c3edd9e526bd64bf8bec5ff1e268772e0e",
+  "repository": "asset-avengers/kafka",
+  "tag": "upstream-4.1.2-amd64-20261029T103720Z",
+  "digest": "sha256:d50ab7b5df612b3c303f9d8afe8fee59626a5de798addfd626fe1924e3205965",
+  "image_id": "sha256:5cc2a2fd93fa2687b44015eee04fb2c3edd9e526bd64bf8bec5ff1e268772e0e",
+  "project_tag": {
+    "project": "asset-avengers"
+  }
+}

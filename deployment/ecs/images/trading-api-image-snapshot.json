@@ -1,0 +1,25 @@
+{
+  "repository": "asset-avengers/trading-api",
+  "context": "backend",
+  "registry": "314662805698.dkr.ecr.us-east-1.amazonaws.com",
+  "tag": "security-20261029T101817Z-6e2858276537",
+  "local_image": "asset-avengers-security-trading-api:candidate-20261029",
+  "image_uri": "314662805698.dkr.ecr.us-east-1.amazonaws.com/asset-avengers/trading-api:security-20261029T101817Z-6e2858276537",
+  "digest": "sha256:a9e72d1988b602c89dcfb3d591a4b169f3712f6f14f366b724f77333efe75927",
+  "scan_image_digest": "sha256:7927340cae356395054936461f1bfc26ca09f922b191a8e6ba09f77a8af46bf3",
+  "image_bytes": 181150483,
+  "base_commit": "d8c71d7dfd899a571b17ef329b46d7ca091f0da0",
+  "source_sha256": "6e28582765379601d0d07e8a496e4f9449cd314876505ef437c75ee37fb8e9cb",
+  "uncommitted": true,
+  "project_tag": {
+    "project": "asset-avengers"
+  },
+  "trivy_version": "0.76.1",
+  "trivy_severity_counts": {
+    "MEDIUM": 44,
+    "LOW": 4
+  },
+  "trivy_report_image_id": "sha256:a9e72d1988b602c89dcfb3d591a4b169f3712f6f14f366b724f77333efe75927",
+  "scan_status": "IN_PROGRESS",
+  "scan_severity_counts": null
+}

@@ -1,0 +1,105 @@
+{
+  "family": "asset-avengers-staff-api",
+  "requiresCompatibilities": [
+    "EC2"
+  ],
+  "networkMode": "bridge",
+  "executionRoleArn": "arn:aws:iam::314662805698:role/asset-avengers-ecs-execution",
+  "taskRoleArn": "arn:aws:iam::314662805698:role/asset-avengers-ecs-task",
+  "containerDefinitions": [
+    {
+      "name": "staff-api",
+      "image": "314662805698.dkr.ecr.us-east-1.amazonaws.com/asset-avengers/staff-api@sha256:06225e7d1019c43fa12d4c5137edddc4842328d74d4f870b35bedf1b76b30625",
+      "essential": true,
+      "cpu": 256,
+      "memory": 768,
+      "memoryReservation": 512,
+      "portMappings": [
+        {
+          "containerPort": 8085,
+          "hostPort": 8085,
+          "protocol": "tcp"
+        }
+      ],
+      "secrets": [
+        {
+          "name": "ADMIN_DB_URL",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:314662805698:secret:matrix/production/credentials-cn8vMu:ADMIN_DB_URL::"
+        },
+        {
+          "name": "ADMIN_DB_USERNAME",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:314662805698:secret:matrix/production/credentials-cn8vMu:ADMIN_DB_USERNAME::"
+        },
+        {
+          "name": "ADMIN_DB_PASSWORD",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:314662805698:secret:matrix/production/credentials-cn8vMu:ADMIN_DB_PASSWORD::"
+        },
+        {
+          "name": "JWT_SECRET",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:314662805698:secret:matrix/production/credentials-cn8vMu:JWT_SECRET::"
+        },
+        {
+          "name": "SUPERSET_SERVICE_PASSWORD",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:314662805698:secret:matrix/production/credentials-cn8vMu:SUPERSET_SERVICE_PASSWORD::"
+        },
+        {
+          "name": "SUPERSET_PUBLIC_URL",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:314662805698:secret:matrix/production/credentials-cn8vMu:SUPERSET_PUBLIC_URL::"
+        }
+      ],
+      "environment": [
+        {
+          "name": "JWT_ISSUER",
+          "value": "endgame-auth"
+        },
+        {
+          "name": "STAFF_JWT_AUDIENCE",
+          "value": "endgame-staff"
+        },
+        {
+          "name": "TRADING_API_URL",
+          "value": "http://10.200.1.118:8080"
+        },
+        {
+          "name": "SUPERSET_API_URL",
+          "value": "http://10.200.1.118:8088"
+        },
+        {
+          "name": "SUPERSET_PUBLIC_PORT",
+          "value": "8088"
+        },
+        {
+          "name": "SUPERSET_SERVICE_USER",
+          "value": "internal-api"
+        }
+      ],
+      "stopTimeout": 60,
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/asset-avengers",
+          "awslogs-region": "us-east-1",
+          "awslogs-stream-prefix": "service"
+        }
+      },
+      "healthCheck": {
+        "command": [
+          "CMD",
+          "bash",
+          "-c",
+          "exec 3<>/dev/tcp/127.0.0.1/8085; printf \"GET /api/v1/analytics/status HTTP/1.0\\r\\nHost: localhost\\r\\n\\r\\n\" >&3; IFS= read -r status <&3; [[ \"$status\" == *\" 401 \"* ]]"
+        ],
+        "interval": 15,
+        "timeout": 10,
+        "retries": 3,
+        "startPeriod": 60
+      }
+    }
+  ],
+  "tags": [
+    {
+      "key": "project",
+      "value": "asset-avengers"
+    }
+  ]
+}

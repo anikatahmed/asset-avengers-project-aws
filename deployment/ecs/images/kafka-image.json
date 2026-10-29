@@ -1,0 +1,15 @@
+{
+  "image": "314662805698.dkr.ecr.us-east-1.amazonaws.com/asset-avengers/kafka@sha256:24419e1f17906cfb223ef843bc5ddfafac515291da7e4ca2aab9a1514266a2bc",
+  "volume": "asset-avengers-internal_kafka_data",
+  "data_path": "/var/lib/docker/volumes/asset-avengers-internal_kafka_data/_data",
+  "version": "4.1.2",
+  "upstream_image": "apache/kafka@sha256:5cc2a2fd93fa2687b44015eee04fb2c3edd9e526bd64bf8bec5ff1e268772e0e",
+  "repository": "asset-avengers/kafka",
+  "tag": "security-20261029T104403Z-f39fdb25cf81",
+  "digest": "sha256:24419e1f17906cfb223ef843bc5ddfafac515291da7e4ca2aab9a1514266a2bc",
+  "image_id": "sha256:24419e1f17906cfb223ef843bc5ddfafac515291da7e4ca2aab9a1514266a2bc",
+  "project_tag": {
+    "project": "asset-avengers"
+  },
+  "os_security_updates_applied": true
+}

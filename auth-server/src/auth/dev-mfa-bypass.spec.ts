@@ -105,7 +105,7 @@ describe.skipIf(!process.env.MFA_TEST_DATABASE_URL)('Dev MFA switch: PostgreSQL 
   const auth = (devMfaBypass: boolean) => {
     const config = settings(devMfaBypass);
     tokens = new TokenService(config);
-    return new AuthService(new UsersRepository(db), new SessionsRepository(db), tokens, config, new MfaService(db, config as unknown as ConfigService));
+    return new AuthService(new UsersRepository(db), new SessionsRepository(db, config), tokens, config, new MfaService(db, config as unknown as ConfigService));
   };
 
   beforeAll(async () => {
@@ -128,6 +128,31 @@ describe.skipIf(!process.env.MFA_TEST_DATABASE_URL)('Dev MFA switch: PostgreSQL 
     await db.query(await readFile('../DB/auth_db.schema.sql', 'utf8'));
     const refreshed = await service.refresh(pair.refreshToken);
     expect(tokens.validateAccessToken(refreshed.accessToken)).toMatchObject({ amr: ['pwd', 'mfa'] });
+  });
+
+  it('a newly provisioned dev account can change its temporary password and sign in without a fixture MFA row', async () => {
+    const email = 'dev.superadmin@example.com';
+    const original = (await db.query('SELECT id,password_hash FROM users WHERE email=$1', [email])).rows[0];
+    const mfa = (await db.query('SELECT enabled_at,locked_until FROM user_mfa WHERE user_id=$1', [original.id])).rows[0];
+    const newPassword = 'new-private-dev-password-123';
+    try {
+      await db.query('DELETE FROM user_mfa WHERE user_id=$1', [original.id]);
+      await db.query('UPDATE users SET password_change_required=true WHERE id=$1', [original.id]);
+      const service = auth(true);
+      expect(await service.login(email, password)).toEqual({ passwordChangeRequired: true });
+      const pair = await service.changeTemporaryPassword(email, password, newPassword);
+      if (!('accessToken' in pair)) throw new Error('Expected a completed login after changing the password');
+      expect(tokens.validateAccessToken(pair.accessToken)).toMatchObject({ roles: ['SUPER_ADMIN'], amr: ['pwd', 'mfa'] });
+      const refreshed = await service.refresh(pair.refreshToken);
+      expect(tokens.validateAccessToken(refreshed.accessToken).amr).toContain('mfa');
+      expect((await db.query('SELECT count(*)::int AS n FROM user_mfa WHERE user_id=$1', [original.id])).rows[0].n).toBe(0);
+      const withoutBypass = await auth(false).login(email, newPassword);
+      expect('mfaRequired' in withoutBypass && withoutBypass.mfaRequired).toBe(true);
+    } finally {
+      await db.query('UPDATE users SET password_hash=$2,password_change_required=false WHERE id=$1', [original.id, original.password_hash]);
+      await db.query('DELETE FROM user_mfa WHERE user_id=$1', [original.id]);
+      await db.query('INSERT INTO user_mfa(user_id,enabled_at,locked_until) VALUES($1,$2,$3)', [original.id,mfa.enabled_at,mfa.locked_until]);
+    }
   });
 
   it('switch off: dev accounts can neither sign in nor set up or replace an authenticator', async () => {

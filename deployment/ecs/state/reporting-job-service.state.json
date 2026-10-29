@@ -1,0 +1,19 @@
+{
+  "service": "asset-avengers-reporting-job",
+  "task_definition": "arn:aws:ecs:us-east-1:314662805698:task-definition/asset-avengers-reporting-job:1",
+  "legacy_container": "asset-avengers-internal-reporting-job-1",
+  "legacy_restart_policy": "unless-stopped",
+  "phase": "healthy",
+  "project_tag": {
+    "project": "asset-avengers"
+  },
+  "service_arn": "arn:aws:ecs:us-east-1:314662805698:service/asset-avengers/asset-avengers-reporting-job",
+  "task_arn": "arn:aws:ecs:us-east-1:314662805698:task/asset-avengers/cdbc04729d1b47df886de10b288d9192",
+  "health": "HEALTHY",
+  "placement_constraints": [
+    {
+      "type": "memberOf",
+      "expression": "ec2InstanceId in ['i-0058f31de51e5c5c8']"
+    }
+  ]
+}

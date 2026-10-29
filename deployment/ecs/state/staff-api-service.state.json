@@ -1,0 +1,19 @@
+{
+  "service": "asset-avengers-staff-api",
+  "task_definition": "arn:aws:ecs:us-east-1:314662805698:task-definition/asset-avengers-staff-api:2",
+  "legacy_container": "asset-avengers-internal-internal-backend-1",
+  "legacy_restart_policy": "unless-stopped",
+  "phase": "healthy",
+  "project_tag": {
+    "project": "asset-avengers"
+  },
+  "service_arn": "arn:aws:ecs:us-east-1:314662805698:service/asset-avengers/asset-avengers-staff-api",
+  "task_arn": "arn:aws:ecs:us-east-1:314662805698:task/asset-avengers/7e08ecce68eb426986aa914201284c91",
+  "health": "HEALTHY",
+  "placement_constraints": [
+    {
+      "type": "memberOf",
+      "expression": "ec2InstanceId in ['i-0058f31de51e5c5c8']"
+    }
+  ]
+}

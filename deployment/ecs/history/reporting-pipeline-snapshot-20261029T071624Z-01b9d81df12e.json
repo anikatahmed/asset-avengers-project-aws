@@ -1,0 +1,23 @@
+{
+  "repository": "asset-avengers/reporting-pipeline",
+  "context": "admin-analytics/pipeline",
+  "registry": "314662805698.dkr.ecr.us-east-1.amazonaws.com",
+  "tag": "snapshot-20261029T071624Z-01b9d81df12e",
+  "local_image": "asset-avengers-reporting-pipeline:snapshot-20261029T071624Z-01b9d81df12e",
+  "image_uri": "314662805698.dkr.ecr.us-east-1.amazonaws.com/asset-avengers/reporting-pipeline:snapshot-20261029T071624Z-01b9d81df12e",
+  "base_commit": "d8c71d7dfd899a571b17ef329b46d7ca091f0da0",
+  "source_sha256": "01b9d81df12ecd7a8b1dc3c1d9157d44b289e5f4ad6f1befb42492dc31463940",
+  "uncommitted": true,
+  "project_tag": {
+    "project": "asset-avengers"
+  },
+  "digest": "sha256:878e4ae56eb5feb3354622751afd55d6c7a9fa3474e94ab64a824c03dbc2093a",
+  "image_bytes": 56273468,
+  "scan_image_digest": "sha256:2108b5a1f383e5e5b54d72d43469f0049c8ac9ed6307464253bc2a763472cc20",
+  "scan_status": "COMPLETE",
+  "scan_severity_counts": {
+    "HIGH": 3,
+    "MEDIUM": 9,
+    "LOW": 3
+  }
+}

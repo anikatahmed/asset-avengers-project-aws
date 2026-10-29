@@ -69,7 +69,7 @@ They're limited to 20 requests per 15 minutes per route and IP, with 429 beyond 
 - **A non-staff id is a 404.**
 - **`temporaryPassword` is shown once and never stored.**
 
-`ADMIN_FRONTEND_TODO.md` section 9 describes the screen.
+`docs/archive/admin-frontend-plan.md` section 9 describes the screen.
 
 **Development accounts.** With `DEV_MFA_BYPASS=true` in a local `.env`, `dev.superadmin@`, `dev.admin@`
 and `dev.analyst@example.com` get tokens straight from `/auth/login`, as optional-MFA clients do

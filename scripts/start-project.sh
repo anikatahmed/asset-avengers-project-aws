@@ -17,6 +17,12 @@ esac
 if [[ $# -gt 1 ]]; then
   echo 'Choose one option: --all, --client or --staff.' >&2; exit 1
 fi
+# An ECS-managed host must not start a second set of Compose containers.
+if [[ -f /etc/ecs/asset-avengers.managed ]]; then
+  echo 'Asset Avengers is managed by ECS on this host. Use the asset-avengers ECS services.' >&2
+  echo 'Compose startup is disabled here to prevent duplicate services and port conflicts.' >&2
+  exit 1
+fi
 # Refresh .env from AWS Secrets Manager so every start uses the current secrets.
 bash scripts/fetch-env-aws.sh
 if ! docker info >/dev/null 2>&1; then

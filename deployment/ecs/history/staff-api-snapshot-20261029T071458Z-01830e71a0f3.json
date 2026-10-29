@@ -1,0 +1,19 @@
+{
+  "repository": "asset-avengers/staff-api",
+  "context": "internal-backend",
+  "registry": "314662805698.dkr.ecr.us-east-1.amazonaws.com",
+  "tag": "snapshot-20261029T071458Z-01830e71a0f3",
+  "local_image": "asset-avengers-staff-api:snapshot-20261029T071458Z-01830e71a0f3",
+  "image_uri": "314662805698.dkr.ecr.us-east-1.amazonaws.com/asset-avengers/staff-api:snapshot-20261029T071458Z-01830e71a0f3",
+  "base_commit": "d8c71d7dfd899a571b17ef329b46d7ca091f0da0",
+  "source_sha256": "01830e71a0f32726a5c8e6e8c96d1c5d7a4c84065bc1b747d4af75ccd33ace49",
+  "uncommitted": true,
+  "project_tag": {
+    "project": "asset-avengers"
+  },
+  "digest": "sha256:cbcb9dfd949649dcb582268644c294e6ac3a8082d0d08ca5c0a747b073deef84",
+  "image_bytes": 152828951,
+  "scan_image_digest": "sha256:b53a45e574db573013c2b714eaf31d294bfb81ca8769ae62515abf57b088d17b",
+  "scan_status": "COMPLETE",
+  "scan_severity_counts": {}
+}

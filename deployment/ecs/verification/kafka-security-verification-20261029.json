@@ -1,0 +1,27 @@
+{
+  "date": "2026-10-29",
+  "broker_version": "4.1.2",
+  "version_changed": false,
+  "changes": "Vendor Alpine OS updates only; original appuser retained",
+  "test": "Isolated produce/consume passed with patched reporting-pipeline image",
+  "findings": {
+    "kafka-existing-version": {
+      "image_id": "sha256:5cc2a2fd93fa2687b44015eee04fb2c3edd9e526bd64bf8bec5ff1e268772e0e",
+      "severity_counts": {
+        "CRITICAL": 6,
+        "HIGH": 53,
+        "MEDIUM": 82,
+        "LOW": 53,
+        "UNKNOWN": 2
+      }
+    },
+    "kafka-patched": {
+      "image_id": "sha256:24419e1f17906cfb223ef843bc5ddfafac515291da7e4ca2aab9a1514266a2bc",
+      "severity_counts": {
+        "HIGH": 18,
+        "MEDIUM": 23,
+        "LOW": 2
+      }
+    }
+  }
+}

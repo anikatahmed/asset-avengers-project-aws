@@ -1,0 +1,25 @@
+{
+  "repository": "asset-avengers/kafka",
+  "context": "deployment/ecs/kafka",
+  "registry": "314662805698.dkr.ecr.us-east-1.amazonaws.com",
+  "tag": "security-20261029T104403Z-f39fdb25cf81",
+  "local_image": "asset-avengers-security-kafka:candidate-20261029",
+  "image_uri": "314662805698.dkr.ecr.us-east-1.amazonaws.com/asset-avengers/kafka:security-20261029T104403Z-f39fdb25cf81",
+  "digest": "sha256:24419e1f17906cfb223ef843bc5ddfafac515291da7e4ca2aab9a1514266a2bc",
+  "scan_image_digest": "sha256:371fe6b5e16d1b0c225e77d4fa0990d3083b49463041eceaf31bbc4e2968a6d0",
+  "image_bytes": 242306199,
+  "base_commit": "d8c71d7dfd899a571b17ef329b46d7ca091f0da0",
+  "source_sha256": "f39fdb25cf813dac2f764a356ce05b8375f7868841eac1623d73203b969d650d",
+  "uncommitted": true,
+  "project_tag": {
+    "project": "asset-avengers"
+  },
+  "trivy_version": "0.76.1",
+  "trivy_severity_counts": {
+    "HIGH": 18,
+    "MEDIUM": 23,
+    "LOW": 2
+  },
+  "trivy_report_image_id": "sha256:24419e1f17906cfb223ef843bc5ddfafac515291da7e4ca2aab9a1514266a2bc",
+  "scan_status": "PENDING"
+}

@@ -1,0 +1,10 @@
+{
+  "version": "6.0.0",
+  "dashboards": 3,
+  "charts": 9,
+  "embedded_dashboards": 3,
+  "metadata_backend": "postgresql",
+  "screenshot_features_disabled": true,
+  "secure_cookies": true,
+  "auth_upstream_ready": true
+}

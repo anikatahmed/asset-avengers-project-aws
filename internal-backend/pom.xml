@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <parent><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-parent</artifactId><version>4.1.1</version><relativePath/></parent>
   <groupId>com.avengers</groupId><artifactId>internal-backend</artifactId><version>0.0.1-SNAPSHOT</version>
-  <properties><java.version>25</java.version><swagger.version>3.1.1</swagger.version></properties>
+  <properties><java.version>25</java.version><tomcat.version>11.0.27</tomcat.version><jackson-2-bom.version>2.21.7</jackson-2-bom.version><jackson-bom.version>3.1.7</jackson-bom.version><swagger.version>3.1.1</swagger.version></properties>
   <dependencies>
     <dependency><groupId>org.apache.pdfbox</groupId><artifactId>pdfbox</artifactId><version>3.0.8</version></dependency>
     <!-- This is an independent service: no client-backend jar or JPA entities. -->

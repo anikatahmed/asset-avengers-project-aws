@@ -1,0 +1,10 @@
+{
+  "backup": "/var/lib/ecs/asset-avengers-backups/kafka-20261029T103901Z.tar",
+  "legacy_stopped": [
+    "asset-avengers-internal-publisher-1",
+    "asset-avengers-internal-consumer-1",
+    "asset-avengers-internal-reporting-job-1",
+    "asset-avengers-internal-kafka-1"
+  ],
+  "archive_verified": true
+}

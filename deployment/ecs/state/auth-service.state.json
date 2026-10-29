@@ -1,0 +1,19 @@
+{
+  "task_definition": "arn:aws:ecs:us-east-1:314662805698:task-definition/asset-avengers-auth:1",
+  "legacy_container": "endgame_auth_server",
+  "legacy_restart_policy": "unless-stopped",
+  "port": 3000,
+  "phase": "healthy",
+  "project_tag": {
+    "project": "asset-avengers"
+  },
+  "service_arn": "arn:aws:ecs:us-east-1:314662805698:service/asset-avengers/asset-avengers-auth",
+  "task_arn": "arn:aws:ecs:us-east-1:314662805698:task/asset-avengers/0c97d9e73dd64db3b03735599cd8eb24",
+  "health": "HEALTHY",
+  "placement_constraints": [
+    {
+      "type": "memberOf",
+      "expression": "ec2InstanceId in ['i-0058f31de51e5c5c8']"
+    }
+  ]
+}

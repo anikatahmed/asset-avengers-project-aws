@@ -1,0 +1,27 @@
+{
+  "date": "2026-10-29",
+  "version": "6.1.0",
+  "candidate": "asset-avengers-security-superset:review-6.1.0",
+  "image_id": "sha256:a86da07b6e5b9ab43b9e4c2782fa120debedb2dfedc5d92f8c443d130250d679",
+  "scanner": "Trivy 0.76.1",
+  "severity_counts": {
+    "LOW": 176,
+    "HIGH": 105,
+    "MEDIUM": 183,
+    "CRITICAL": 7,
+    "UNKNOWN": 1
+  },
+  "tests": {
+    "sso": "7 passed",
+    "metadata_migration": "6.0 to 6.1 passed on disposable local PostgreSQL",
+    "bootstrap": "three dashboards registered after upgrade"
+  },
+  "limits": "Fresh synthetic metadata; not a production metadata clone or browser visual test",
+  "published_to_ecr": false,
+  "production_changed": false,
+  "decision": "Not approved for deployment; critical findings remain",
+  "sources": [
+    "https://pypi.org/pypi/apache-superset/6.1.0/json",
+    "https://github.com/apache/superset/blob/6.1.0/UPDATING.md"
+  ]
+}

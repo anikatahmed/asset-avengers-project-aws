@@ -1,0 +1,19 @@
+{
+  "repository": "asset-avengers/superset",
+  "context": "admin-analytics/superset",
+  "registry": "314662805698.dkr.ecr.us-east-1.amazonaws.com",
+  "tag": "snapshot-20261029T071650Z-896ea5b29d05",
+  "local_image": "asset-avengers-superset:snapshot-20261029T071650Z-896ea5b29d05",
+  "image_uri": "314662805698.dkr.ecr.us-east-1.amazonaws.com/asset-avengers/superset:snapshot-20261029T071650Z-896ea5b29d05",
+  "base_commit": "d8c71d7dfd899a571b17ef329b46d7ca091f0da0",
+  "source_sha256": "896ea5b29d052a7497d79dbb428221eda24c8bb3f3f0b7fe83f9cad57eef0c0b",
+  "uncommitted": true,
+  "project_tag": {
+    "project": "asset-avengers"
+  },
+  "digest": "sha256:ce13b28eae3885050ad47bd23ebfd9fdafbb3806f11f944698f7c577e2612807",
+  "image_bytes": 268080506,
+  "scan_image_digest": "sha256:ed6baaf7b0523c2818dc02f1320bbdf53296cb563aeb8f9acc0f365116b62916",
+  "scan_status": "FAILED",
+  "scan_severity_counts": {}
+}

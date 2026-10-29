@@ -1,0 +1,12 @@
+# Supported security updates that satisfy Superset 6.0.0's declared constraints.
+# Resolve with the application included, so incompatible upgrades fail the build.
+apache-superset==6.0.0
+Brotli==1.2.1
+Mako==1.3.12
+PyJWT==2.14.0
+certifi==2026.10.18
+# dnspython's fix requires Python >=3.11; the pinned image uses Python 3.10.
+jaraco.context==6.1.0
+pyasn1==0.6.4
+urllib3==2.8.0
+wheel==0.46.2

@@ -10,19 +10,29 @@ SECRET_KEY = os.environ['SUPERSET_SECRET_KEY']
 SQLALCHEMY_DATABASE_URI = URL.create('postgresql+psycopg2',
     username=os.environ['SUPERSET_METADATA_USER'], password=os.environ['SUPERSET_METADATA_PASSWORD'],
     host=os.getenv('SUPERSET_METADATA_HOST', 'reporting-db'), port=int(os.getenv('SUPERSET_METADATA_PORT', '5432')), database=os.environ['SUPERSET_METADATA_DB']).render_as_string(hide_password=False)
-FEATURE_FLAGS = {'EMBEDDED_SUPERSET': True}
+# Keep optional server-side screenshot/image-processing jobs disabled while
+# upstream Pillow fixes remain outside the supported Superset dependency range.
+FEATURE_FLAGS = {
+    'EMBEDDED_SUPERSET': True,
+    'THUMBNAILS': False,
+    'ALERT_REPORTS': False,
+    'PLAYWRIGHT_REPORTS_AND_THUMBNAILS': False,
+}
+PREVENT_UNSAFE_DB_CONNECTIONS = True
 GUEST_TOKEN_JWT_SECRET = os.environ['SUPERSET_GUEST_TOKEN_SECRET']
 GUEST_TOKEN_JWT_AUDIENCE = 'asset-avengers-internal'
 GUEST_TOKEN_JWT_EXP_SECONDS = 300
 GUEST_ROLE_NAME = 'EmbeddedAnalyst'
 ENABLE_PROXY_FIX = True
-# Local HTTP is intentional for the local deployment. Use HTTPS/secure cookies when hosting it.
-SESSION_COOKIE_SECURE = False
+# Local HTTP stays supported; hosted deployments enable secure cookies behind HTTPS.
+SESSION_COOKIE_SECURE = os.environ.get('SUPERSET_COOKIE_SECURE', 'false').lower() == 'true'
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = 'Lax'
 WTF_CSRF_ENABLED = True
 TALISMAN_ENABLED = True
 TALISMAN_CONFIG = {
     'force_https': False,
-    'session_cookie_secure': False,
+    'session_cookie_secure': SESSION_COOKIE_SECURE,
     'frame_options': None,
     'content_security_policy': {
         'default-src': ["'self'"],

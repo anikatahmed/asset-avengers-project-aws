@@ -173,29 +173,25 @@ See [the staff API contract](admin-analytics/frontend-api.md) before adding a sc
 | `superset/bootstrap.py` | Initial users/roles, restricted dataset, three dashboards and registry IDs; preserves authored layouts on rerun |
 | `superset/Dockerfile` | Pinned Superset image with PostgreSQL driver and project initialization/configuration |
 
-## Compose, configuration and persisted data
+## Deployment, configuration and persisted data
 
-`docker-compose.yml` starts client frontend, trading backend, auth server and both
-source databases. `deployment/admin-analytics/admin-analyst-stack.compose.yml` starts staff UI/API,
-reporting DB, Kafka/topic initializer, publisher, consumer, scheduler and Superset.
-The separate folder keeps the staff team's lifecycle explicit. Root `.env`
-supplies all client, auth, trading, reporting and Superset configuration, including
-staff component credentials and ports. Root `.env.example` is the only deployment
-template; the real root `.env` stays ignored.
+The live deployment is managed by ECS on EC2. See
+[operations](../deployment/ecs/README.md): `tasks/` contains task definitions,
+`images/` records pinned ECR digests, `state/` contains runtime/rollback references,
+and `verification/` contains test and security evidence. PostgreSQL is in RDS;
+Kafka uses its existing persistent host volume. Angular builds are in S3/CloudFront.
 
-`deployment/admin-analytics/init-databases.sql` creates separate API/ETL/report-reader/
-metadata logins on first initialization. `admin-analyst-tests.override.yml` and
-`test-runtime.Dockerfile` support isolated test services. The verifier creates a
-temporary port-free base configuration before applying the test override, preserving
-relative mounts without requiring modern YAML reset tags.
+`docker-compose.yml` and the staff Compose file remain legacy deployment references.
+Disposable local database/frontend stacks are defined in
+`deployment/ci/ci.compose.yml` and
+`deployment/admin-analytics/admin-analyst-ci.compose.yml`; the Jenkins verification
+scripts use isolated project names, networks and storage. Do not run CI against RDS.
 
-Each application Dockerfile builds just its own code. `.dockerignore` keeps
-local builds/dependencies and secrets out of contexts. `.gitignore` keeps env
-values, build output and browser artifacts out of source control. Root `pom.xml`
-is a build convenience, not a shared application module. `new-compose.yml` and
-`DB/docker-compose-proddb.yml` are older/limited alternatives; use documented
-current stacks. Local auth and reporting volumes persist; trading uses the
-configured host directory shown in root Compose.
+Application Dockerfiles build each service independently. `.dockerignore` keeps
+local dependencies and environment files out of build contexts; `.gitignore`
+excludes credentials and generated output. Root `.env.example` documents setting
+names; live ECS services inject Secrets Manager references. The root Maven POM is
+a build convenience rather than a shared application module.
 
 ## Verification and delivery
 
@@ -226,7 +222,7 @@ Its volume-removing cleanup belongs on disposable infrastructure.
 
 `docs/endgame-api.yaml`, `docs/orders.yaml`, older README notes and `UML/` are
 supporting design artifacts; generated Swagger/controller code is the current
-endpoint reference. `ADMIN_FRONTEND_TODO.md` records the final staff frontend
+endpoint reference. `docs/archive/admin-frontend-plan.md` preserves the historical staff frontend
 handoff. The project guide and staff setup document the running local deployment rather than
 assuming every older diagram is implemented.
 

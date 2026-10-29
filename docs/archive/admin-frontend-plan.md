@@ -1,12 +1,14 @@
+> Historical frontend implementation plan. Admin and analyst Angular applications are now deployed; consult the current [staff API contract](../admin-analytics/frontend-api.md) and [ECS guide](../../deployment/ecs/README.md).
+
 # Admin frontend: what needs building
 
 The staff API builds independently in `internal-backend/`, with admin and
 analyst modules in one deployment. The Angular app still needs staff screens.
-For immediate manual testing, use the separate [test console](internal-frontend/README.md)
+For immediate manual testing, use the separate [test console](../../internal-frontend/README.md)
 on port 8086. Its plain JavaScript implementation is a working API example; these
 tasks describe the final Angular interface.
-Start with [the current API contract](docs/admin-analytics/frontend-api.md) and
-[setup instructions](docs/admin-analytics/setup.md).
+Start with [the current API contract](../admin-analytics/frontend-api.md) and
+[setup instructions](../admin-analytics/setup.md).
 
 ## 1. Routing and access
 
@@ -147,7 +149,7 @@ clear stale selections on edits, and retain UUID entry for instrument actions.
 The Angular staff console (`internal-frontend/`) does all of this: sign-in in `src/app/api.ts`
 and `src/app/app.ts`, the Staff page in `src/app/pages/staff/`. Each item names the Playwright test
 in `internal-frontend/tests/console.spec.js` that proves it. The servers enforce every rule; the UI
-only avoids offering what they would refuse. API details: [staff sign-in and staff accounts](docs/admin-analytics/frontend-api.md#staff-sign-in-and-staff-accounts).
+only avoids offering what they would refuse. API details: [staff sign-in and staff accounts](../admin-analytics/frontend-api.md#staff-sign-in-and-staff-accounts).
 
 ### Sign-in
 

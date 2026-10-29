@@ -1,0 +1,39 @@
+{
+  "verified_at": "2026-10-29T10:50:07.169166+00:00",
+  "service_count": 8,
+  "all_services_steady": true,
+  "all_tasks_healthy": true,
+  "services_and_tasks_project_tag_verified": true,
+  "agent_connected": true,
+  "public_endpoints": [
+    {
+      "url": "https://www.assetavengers.top/auth/profile",
+      "status": 401
+    },
+    {
+      "url": "https://www.assetavengers.top/api/v1/me/accounts",
+      "status": 401
+    },
+    {
+      "url": "https://admin.assetavengers.top/api/v1/analytics/status",
+      "status": 401
+    },
+    {
+      "url": "https://analyst.assetavengers.top/api/v1/analytics/status",
+      "status": 401
+    },
+    {
+      "url": "https://analytics.assetavengers.top/health",
+      "status": 200
+    }
+  ],
+  "reporting": {
+    "heartbeat_age_seconds": 1.638346,
+    "published_reports": 1
+  },
+  "new_compute_created": false,
+  "metadata_migration_run": false,
+  "database_reset_or_fixtures_run": false,
+  "credentials_changed": false,
+  "authenticated_browser_login_tested": false
+}

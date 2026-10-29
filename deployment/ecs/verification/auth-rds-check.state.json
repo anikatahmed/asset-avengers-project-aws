@@ -1,0 +1,12 @@
+{
+  "task_arn": "arn:aws:ecs:us-east-1:314662805698:task/asset-avengers/45bd25dd913b49f684ca0c849adc30be",
+  "task_definition": "arn:aws:ecs:us-east-1:314662805698:task-definition/asset-avengers-auth-rds-check:1",
+  "production_traffic_changed": false,
+  "exit_code": 0,
+  "verified": {
+    "database": "auth",
+    "role": "natasha_auth",
+    "can_read": true,
+    "tls": true
+  }
+}

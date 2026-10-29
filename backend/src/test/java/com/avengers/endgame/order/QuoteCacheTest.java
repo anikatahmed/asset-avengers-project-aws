@@ -8,6 +8,56 @@ import java.math.BigDecimal;
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 class QuoteCacheTest {
+ @Test void transientFailureRetriesAtThirtySecondsInsteadOfFiveMinutes() {
+    var pricing = mock(PricingApiClient.class);
+    var clock = mock(Clock.class);
+    Instant now = Instant.parse("2026-10-14T12:00:00Z");
+    when(clock.instant()).thenReturn(now);
+    var observation = quote(now);
+    when(pricing.getQuote("AAPL"))
+        .thenThrow(new com.avengers.endgame.integration.pricing.exception.PricingApiException("timeout"))
+        .thenReturn(observation);
+    var cache = new QuoteCache(pricing, Duration.ofMinutes(15), clock);
+    assertThrows(com.avengers.endgame.integration.pricing.exception.PricingApiException.class, () -> cache.search("AAPL"));
+    when(clock.instant()).thenReturn(now.plusSeconds(29));
+    assertThrows(com.avengers.endgame.integration.pricing.exception.PricingApiException.class, () -> cache.search("AAPL"));
+    verify(pricing, times(1)).getQuote("AAPL");
+    when(clock.instant()).thenReturn(now.plusSeconds(30));
+    assertSame(observation, cache.search("AAPL"));
+    verify(pricing, times(2)).getQuote("AAPL");
+ }
+ @Test void unusableQuoteRetriesAtThirtySeconds() {
+    var pricing = mock(PricingApiClient.class);
+    var clock = mock(Clock.class);
+    Instant now = Instant.parse("2026-10-14T12:00:00Z");
+    when(clock.instant()).thenReturn(now);
+    var observation = quote(now);
+    when(pricing.getQuote("AAPL")).thenReturn(null).thenReturn(observation);
+    var cache = new QuoteCache(pricing, Duration.ofMinutes(15), clock);
+    assertNull(cache.search("AAPL"));
+    when(clock.instant()).thenReturn(now.plusSeconds(29));
+    assertThrows(com.avengers.endgame.integration.pricing.exception.PricingApiException.class, () -> cache.search("AAPL"));
+    verify(pricing, times(1)).getQuote("AAPL");
+    when(clock.instant()).thenReturn(now.plusSeconds(30));
+    assertSame(observation, cache.search("AAPL"));
+ }
+ @Test void providerRateLimitStillHonorsItsLongerRetryDeadline() {
+    var pricing = mock(PricingApiClient.class);
+    var clock = mock(Clock.class);
+    Instant now = Instant.parse("2026-10-14T12:00:00Z");
+    when(clock.instant()).thenReturn(now);
+    when(pricing.getQuote("AAPL"))
+        .thenThrow(new com.avengers.endgame.integration.pricing.exception.PricingRateLimitException(null, now.plusSeconds(120)))
+        .thenReturn(quote(now));
+    var cache = new QuoteCache(pricing, Duration.ofMinutes(15), clock);
+    assertThrows(com.avengers.endgame.integration.pricing.exception.PricingRateLimitException.class, () -> cache.search("AAPL"));
+    when(clock.instant()).thenReturn(now.plusSeconds(30));
+    assertThrows(com.avengers.endgame.integration.pricing.exception.PricingApiException.class, () -> cache.search("AAPL"));
+    verify(pricing, times(1)).getQuote("AAPL");
+    when(clock.instant()).thenReturn(now.plusSeconds(120));
+    assertNotNull(cache.search("AAPL"));
+    verify(pricing, times(2)).getQuote("AAPL");
+ }
  @Test void displaysSearchesAndTradesShareOneQuoteUntilTtlExpires() {
     var pricing = mock(PricingApiClient.class);
     var clock = mock(Clock.class);

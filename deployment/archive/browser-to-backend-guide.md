@@ -1,3 +1,5 @@
+> Historical migration walkthrough. Its starting-state observations are superseded by [current ECS operations](../ecs/README.md).
+
 # Browser-to-backend migration walkthrough
 
 This is a general guide for walking through the migration one step at a time.

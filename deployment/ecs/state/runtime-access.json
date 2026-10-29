@@ -1,0 +1,12 @@
+{
+  "roles": {
+    "asset-avengers-ecs-execution": "arn:aws:iam::314662805698:role/asset-avengers-ecs-execution",
+    "asset-avengers-ecs-task": "arn:aws:iam::314662805698:role/asset-avengers-ecs-task"
+  },
+  "secret_arn": "arn:aws:secretsmanager:us-east-1:314662805698:secret:matrix/production/credentials-cn8vMu",
+  "log_group": "/ecs/asset-avengers",
+  "log_retention_days": 14,
+  "project_tag": {
+    "project": "asset-avengers"
+  }
+}

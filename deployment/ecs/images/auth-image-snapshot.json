@@ -1,0 +1,22 @@
+{
+  "repository": "asset-avengers/auth",
+  "context": "auth-server",
+  "registry": "314662805698.dkr.ecr.us-east-1.amazonaws.com",
+  "tag": "security-20261029T100344Z-96da18930ff3",
+  "local_image": "asset-avengers-security-auth:candidate-20261029",
+  "image_uri": "314662805698.dkr.ecr.us-east-1.amazonaws.com/asset-avengers/auth:security-20261029T100344Z-96da18930ff3",
+  "digest": "sha256:baeef7305dbb2fe0911831c50a51ea60a48e82d44d64157f8d4e417c32e02b0a",
+  "scan_image_digest": "sha256:b6afd96836f84d01ab669b962a3056f5c68a7b1ae34b76219d227356350f1c19",
+  "image_bytes": 80680482,
+  "base_commit": "d8c71d7dfd899a571b17ef329b46d7ca091f0da0",
+  "source_sha256": "96da18930ff3e8a2982b9d5c619fc8d3f744a6771e81bb404d7f52321fd47557",
+  "uncommitted": true,
+  "project_tag": {
+    "project": "asset-avengers"
+  },
+  "trivy_version": "0.76.1",
+  "trivy_severity_counts": {},
+  "trivy_report_image_id": "sha256:baeef7305dbb2fe0911831c50a51ea60a48e82d44d64157f8d4e417c32e02b0a",
+  "scan_status": "COMPLETE",
+  "scan_severity_counts": {}
+}

@@ -1,0 +1,121 @@
+{
+  "family": "asset-avengers-superset",
+  "requiresCompatibilities": [
+    "EC2"
+  ],
+  "networkMode": "bridge",
+  "executionRoleArn": "arn:aws:iam::314662805698:role/asset-avengers-ecs-execution",
+  "taskRoleArn": "arn:aws:iam::314662805698:role/asset-avengers-ecs-task",
+  "containerDefinitions": [
+    {
+      "name": "superset",
+      "image": "314662805698.dkr.ecr.us-east-1.amazonaws.com/asset-avengers/superset@sha256:55db4d2c900eb42a570023889e9ad08f7782e518e4b85cbec827ed436d06e673",
+      "essential": true,
+      "cpu": 256,
+      "memory": 1280,
+      "memoryReservation": 768,
+      "portMappings": [
+        {
+          "containerPort": 8088,
+          "hostPort": 8088,
+          "protocol": "tcp"
+        }
+      ],
+      "secrets": [
+        {
+          "name": "ADMIN_DB_HOST",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:314662805698:secret:matrix/production/credentials-cn8vMu:ADMIN_DB_HOST::"
+        },
+        {
+          "name": "ADMIN_DB_NAME",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:314662805698:secret:matrix/production/credentials-cn8vMu:ADMIN_DB_NAME::"
+        },
+        {
+          "name": "SUPERSET_METADATA_HOST",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:314662805698:secret:matrix/production/credentials-cn8vMu:SUPERSET_METADATA_HOST::"
+        },
+        {
+          "name": "SUPERSET_METADATA_USER",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:314662805698:secret:matrix/production/credentials-cn8vMu:SUPERSET_METADATA_USER::"
+        },
+        {
+          "name": "SUPERSET_METADATA_PASSWORD",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:314662805698:secret:matrix/production/credentials-cn8vMu:SUPERSET_METADATA_PASSWORD::"
+        },
+        {
+          "name": "SUPERSET_METADATA_DB",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:314662805698:secret:matrix/production/credentials-cn8vMu:SUPERSET_METADATA_DB::"
+        },
+        {
+          "name": "SUPERSET_REPORTING_USER",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:314662805698:secret:matrix/production/credentials-cn8vMu:SUPERSET_REPORTING_USER::"
+        },
+        {
+          "name": "SUPERSET_REPORTING_PASSWORD",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:314662805698:secret:matrix/production/credentials-cn8vMu:SUPERSET_REPORTING_PASSWORD::"
+        },
+        {
+          "name": "SUPERSET_SECRET_KEY",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:314662805698:secret:matrix/production/credentials-cn8vMu:SUPERSET_SECRET_KEY::"
+        },
+        {
+          "name": "SUPERSET_GUEST_TOKEN_SECRET",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:314662805698:secret:matrix/production/credentials-cn8vMu:SUPERSET_GUEST_TOKEN_SECRET::"
+        },
+        {
+          "name": "SUPERSET_SSO_SECRET",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:314662805698:secret:matrix/production/credentials-cn8vMu:SUPERSET_SSO_SECRET::"
+        },
+        {
+          "name": "SUPERSET_EMBED_ORIGINS",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:314662805698:secret:matrix/production/credentials-cn8vMu:SUPERSET_EMBED_ORIGINS::"
+        },
+        {
+          "name": "SUPERSET_COOKIE_SECURE",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:314662805698:secret:matrix/production/credentials-cn8vMu:SUPERSET_COOKIE_SECURE::"
+        }
+      ],
+      "environment": [
+        {
+          "name": "SUPERSET_CONFIG_PATH",
+          "value": "/app/pythonpath/superset_config.py"
+        },
+        {
+          "name": "PGSSLMODE",
+          "value": "require"
+        },
+        {
+          "name": "ENDGAME_AUTH_URL",
+          "value": "http://10.200.1.118:3000"
+        }
+      ],
+      "stopTimeout": 60,
+      "healthCheck": {
+        "command": [
+          "CMD",
+          "/app/.venv/bin/python",
+          "-c",
+          "import urllib.request;assert urllib.request.urlopen('http://localhost:8088/health',timeout=5).status==200"
+        ],
+        "interval": 15,
+        "timeout": 10,
+        "retries": 3,
+        "startPeriod": 60
+      },
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/asset-avengers",
+          "awslogs-region": "us-east-1",
+          "awslogs-stream-prefix": "service"
+        }
+      }
+    }
+  ],
+  "tags": [
+    {
+      "key": "project",
+      "value": "asset-avengers"
+    }
+  ]
+}

@@ -1,4 +1,4 @@
-> AWS deployment now uses RDS and S3/CloudFront. See the [current runtime guide](../../deployment/aws-runtime.md); local container startup instructions below are historical.
+> AWS deployment now uses ECS on EC2, RDS and S3/CloudFront. See the [current runtime guide](../../deployment/aws-runtime.md); local container startup instructions below are historical.
 
 # Setup and verification
 
@@ -84,7 +84,7 @@ publishes ongoing outbox events. The consumer and configurable report scheduler 
 
 The [simple test UI](../../internal-frontend/README.md) provides audit lookups,
 commands and embedded dashboards now. The final Angular staff pages remain the
-frontend teammate's work. `ADMIN_FRONTEND_TODO.md` and the [API contract](frontend-api.md)
+frontend teammate's work. `docs/archive/admin-frontend-plan.md` and the [API contract](frontend-api.md)
 provide the handoff. Existing auth development fixtures include staff roles. New
 staff accounts come from auth-server's staff routes: the super admin
 (`super.admin@example.com`) creates admins, and admins create analysts, from the admin
