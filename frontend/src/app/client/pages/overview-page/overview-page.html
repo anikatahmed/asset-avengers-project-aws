@@ -12,6 +12,7 @@
   ><app-portfolio-summary
     [value]="store.aggregateValue()"
     [totalReturn]="store.aggregateTotalReturn()"
+    [valuationReady]="store.aggregateValuationReady()"
     [cash]="store.aggregateCash()"
     [assetCount]="store.aggregateHoldings().length"
     [aggregate]="true" />

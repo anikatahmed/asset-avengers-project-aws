@@ -140,7 +140,9 @@ export class PortfolioStore {
   // Subscribe from the client layout so polling stops on logout/navigation out of the client area.
   liveUpdates() {
     return merge(timer(1000, 3000), this.refreshRequests).pipe(
-      exhaustMap(() => document.hidden ? EMPTY : this.refreshPortfolio()),
+      exhaustMap(() => document.hidden ? EMPTY : this.refreshPortfolio().pipe(
+        tap(() => this.refreshAggregatePortfolio()),
+      )),
     );
   }
 
@@ -190,6 +192,8 @@ export class PortfolioStore {
         const positions = new Map(account.holdings.map(position => [position.symbol, position]));
         const knownSymbols = new Set(this.assets().map(asset => asset.symbol));
         const added = account.holdings.filter(position => !knownSymbols.has(position.symbol));
+        const newlyHeld = account.holdings.some(position => position.quantity > 0
+          && !this.holdings().some(asset => asset.symbol === position.symbol));
         this.assets.update(assets => [
           ...assets.map(asset => ({ ...asset, shares: positions.get(asset.symbol)?.quantity ?? 0,
             instrumentId: positions.get(asset.symbol)?.instrumentId || asset.instrumentId,
@@ -199,7 +203,7 @@ export class PortfolioStore {
           ...added.map(position => ({ symbol: position.symbol, name: position.name,
             shares: position.quantity, instrumentId: position.instrumentId, price: 0, cost: position.averageCost ?? 0, costKnown: position.averageCost != null, change: 0, purchases: position.purchases ?? [] })),
         ]);
-        if (added.length) this.fetchQuotesForAssets(this.instruments());
+        if (added.length || newlyHeld) this.fetchQuotesForAssets(this.instruments());
         const symbols = new Map([
           ...this.instruments().map(instrument => [instrument.instrumentId, instrument.symbol] as const),
           ...account.holdings.map(position => [position.instrumentId, position.symbol] as const),
@@ -225,6 +229,7 @@ export class PortfolioStore {
   }
 
   refreshAggregatePortfolio(): void {
+    if (this.aggregateLoading()) return;
     const accounts = this.accountApi.accounts();
     if (!accounts.length) {
       this.aggregateAssets.set([]);
@@ -240,6 +245,11 @@ export class PortfolioStore {
       next: snapshots => {
         if (version !== this.sessionVersion) return;
         const assets = new Map<string, Asset>();
+        // A database snapshot supplies quantities/costs, not market prices. Keep
+        // the latest quote rather than resetting every refresh to a $0 valuation.
+        const quoted = new Map([...this.assets(), ...this.aggregateAssets()]
+          .filter(asset => Number.isFinite(asset.price) && asset.price > 0)
+          .map(asset => [asset.symbol, asset]));
         let cash = 0;
         let cashBalance = 0;
         let realizedReturn = 0;
@@ -254,7 +264,9 @@ export class PortfolioStore {
             const shares = current?.shares ?? 0;
             const nextShares = shares + position.quantity;
             const knownCost = position.averageCost != null && (current?.costKnown ?? true);
+            const lastQuote = quoted.get(position.symbol);
             assets.set(position.symbol, {
+              ...lastQuote,
               symbol: position.symbol,
               name: position.name,
               instrumentId: position.instrumentId,
@@ -263,8 +275,8 @@ export class PortfolioStore {
                 ? ((current?.cost ?? 0) * shares + (position.averageCost ?? 0) * position.quantity) / nextShares
                 : 0,
               costKnown: knownCost,
-              price: current?.price ?? 0,
-              change: current?.change ?? 0,
+              price: lastQuote?.price ?? 0,
+              change: lastQuote?.change ?? 0,
               purchases: [...(current?.purchases ?? []), ...(position.purchases ?? [])],
             });
           }
@@ -275,7 +287,8 @@ export class PortfolioStore {
         this.aggregateRealizedReturn.set(realizedReturn);
         this.aggregateWatchedSymbols.set([...watchedSymbols].sort());
         this.aggregateLoading.set(false);
-        this.fetchQuotesForAssets(this.aggregateAssets());
+        if (this.aggregateHoldings().some(asset => !Number.isFinite(asset.price) || asset.price <= 0))
+          this.fetchQuotesForAssets(this.aggregateAssets());
       },
       error: error => {
         if (version !== this.sessionVersion) return;
@@ -396,6 +409,7 @@ export class PortfolioStore {
   }
 
   readonly holdings = computed(() => this.assets().filter((a) => a.shares > 0));
+  readonly valuationReady = computed(() => this.holdings().every(asset => Number.isFinite(asset.price) && asset.price > 0));
   readonly value = computed(() =>
     round(this.cashBalance() + this.assets().reduce((sum, a) => sum + a.shares * a.price, 0)),
   );
@@ -404,16 +418,19 @@ export class PortfolioStore {
   readonly totalReturn = computed(() =>
     round(
       this.realizedReturn() +
-        this.assets().reduce((sum, a) => sum + (a.costKnown === false ? 0 : a.shares * (a.price - a.cost)), 0),
+        this.assets().reduce((sum, a) => sum + (a.costKnown === false || !Number.isFinite(a.price) || a.price <= 0
+          ? 0 : a.shares * (a.price - a.cost)), 0),
     ),
   );
   readonly aggregateHoldings = computed(() => this.aggregateAssets().filter(asset => asset.shares > 0));
+  readonly aggregateValuationReady = computed(() => this.aggregateHoldings().every(asset => Number.isFinite(asset.price) && asset.price > 0));
   readonly aggregateValue = computed(() =>
     round(this.aggregateCashBalance() + this.aggregateAssets().reduce((sum, asset) => sum + asset.shares * asset.price, 0)),
   );
   readonly aggregateTotalReturn = computed(() =>
     round(this.aggregateRealizedReturn() + this.aggregateAssets().reduce((sum, asset) =>
-      sum + (asset.costKnown === false ? 0 : asset.shares * (asset.price - asset.cost)), 0)),
+      sum + (asset.costKnown === false || !Number.isFinite(asset.price) || asset.price <= 0
+        ? 0 : asset.shares * (asset.price - asset.cost)), 0)),
   );
 
   validate(symbol: string, side: Side, quantity: number, price?: number): string {

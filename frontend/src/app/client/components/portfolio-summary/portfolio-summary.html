@@ -1,12 +1,12 @@
 <section class="metrics" [attr.aria-label]="aggregate() ? 'All investment accounts summary' : 'Portfolio summary'">
   <article class="card">
     <p>{{ aggregate() ? 'Total value across accounts' : 'Portfolio value' }}</p>
-    <div class="value">{{ value() | currency }}</div>
+    <div class="value">@if (valuationReady()) { {{ value() | currency }} } @else { Awaiting prices }</div>
     <p class="positive">Holdings + available cash</p>
   </article>
   <article class="card">
     <p>{{ aggregate() ? 'Total return across accounts' : 'Total return' }}</p>
-    <div class="value">{{ totalReturn() >= 0 ? '+' : '' }}{{ totalReturn() | currency }}</div>
+    <div class="value">@if (valuationReady()) { {{ totalReturn() >= 0 ? '+' : '' }}{{ totalReturn() | currency }} } @else { Awaiting prices }</div>
     <p class="positive">Recorded trades · Realized + unrealized</p>
   </article>
   <article class="card">

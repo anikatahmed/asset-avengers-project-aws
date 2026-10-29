@@ -2,6 +2,7 @@
   ><app-portfolio-summary
     [value]="store.value()"
     [totalReturn]="store.totalReturn()"
+    [valuationReady]="store.valuationReady()"
     [cash]="store.cash()"
     [assetCount]="store.holdings().length" /><app-holdings-table
     [assets]="store.holdings()"

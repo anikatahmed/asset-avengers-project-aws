@@ -1,12 +1,12 @@
 import { AccountApiService } from './api/accounts/account-api.service';
 import { TestBed } from '@angular/core/testing';
-import { signal } from '@angular/core';
+import { signal, WritableSignal } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { RouterTestingHarness } from '@angular/router/testing';
 import { routes } from './app.routes';
-import { PortfolioStore } from './client/state/portfolio.store';
+import { Asset, PortfolioStore } from './client/state/portfolio.store';
 import { InstrumentApiService } from './api/instruments/instrument-api.service';
 import { AuthService } from './auth/auth.service';
 import { NEVER, of } from 'rxjs';
@@ -27,7 +27,8 @@ describe('Saved client workspace', () => {
       delayedPriceSymbols: signal([]), portfolioError: signal(null), pricesError: signal(null), lastPortfolioUpdatedAt: signal(null), lastPricesUpdatedAt: signal(null), retryUpdates: () => undefined,
       requestRefresh: () => undefined, assets: signal([]), instruments: signal([]), watchedSymbols: signal([]),
       holdings: signal([]), orders: signal([]), cash: signal(0), cashBalance: signal(0),
-      value: signal(0), totalReturn: signal(0), accountId: signal('account'), accountSwitchPending: signal(false), isWatched: () => false,
+      value: signal(0), totalReturn: signal(0), valuationReady: signal(true), aggregateValuationReady: signal(true),
+      accountId: signal('account'), accountSwitchPending: signal(false), isWatched: () => false,
     } },
   ] }));
   it('starts without invented holdings or performance history', async () => {
@@ -51,6 +52,22 @@ describe('Saved client workspace', () => {
     expect(harness.routeNativeElement!.textContent).toContain('Some information may be out of date');
     store.portfolioError.set(null); harness.detectChanges();
     expect(harness.routeNativeElement!.querySelector('.data-warning')).toBeNull();
+  });
+  it('shows pending valuation rather than a fabricated loss while keeping the held asset count', async () => {
+    const store = TestBed.inject(PortfolioStore);
+    const ready = store.aggregateValuationReady as WritableSignal<boolean>;
+    const holdings = store.aggregateHoldings as WritableSignal<Asset[]>;
+    ready.set(false);
+    holdings.set([{ symbol: 'MSFT', name: 'Microsoft', shares: 10,
+      cost: 500, costKnown: true, price: 0, change: 0, instrumentId: 'msft' }]);
+    const harness = await RouterTestingHarness.create('/client/overview');
+    const metrics = harness.routeNativeElement!.querySelector('app-portfolio-summary')!;
+    expect(metrics.textContent).toContain('Awaiting prices');
+    expect(metrics.textContent).not.toContain('-$5,000');
+    expect(metrics.querySelectorAll('.value')[3].textContent?.trim()).toBe('1');
+    ready.set(true);
+    harness.detectChanges();
+    expect(metrics.textContent).not.toContain('Awaiting prices');
   });
   it('shows quiet delayed-price information only on pages that use quotes', async () => {
     const store = TestBed.inject(PortfolioStore);
