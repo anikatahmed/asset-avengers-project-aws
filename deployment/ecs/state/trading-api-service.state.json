@@ -3,17 +3,20 @@
   "task_definition": "arn:aws:ecs:us-east-1:314662805698:task-definition/asset-avengers-trading-api:2",
   "legacy_container": "endgame_backend",
   "legacy_restart_policy": "unless-stopped",
-  "phase": "healthy",
+  "phase": "paused",
   "project_tag": {
     "project": "asset-avengers"
   },
   "service_arn": "arn:aws:ecs:us-east-1:314662805698:service/asset-avengers/asset-avengers-trading-api",
   "task_arn": "arn:aws:ecs:us-east-1:314662805698:task/asset-avengers/4c0d02ac82974f81a930a32dcea0be95",
-  "health": "HEALTHY",
   "placement_constraints": [
     {
       "type": "memberOf",
       "expression": "ec2InstanceId in ['i-0058f31de51e5c5c8']"
     }
-  ]
+  ],
+  "last_running_health": "HEALTHY",
+  "desired_count": 0,
+  "desired_count_before_pause": 1,
+  "paused_at": "2026-10-29T11:30:21.301734+00:00"
 }

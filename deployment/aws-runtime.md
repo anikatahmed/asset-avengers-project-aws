@@ -7,9 +7,11 @@ and rollback instructions is the [ECS operations guide](ecs/README.md).
 
 1. Start `asset-avengers-db` in `us-east-1`, if stopped, and wait for `available`.
 2. Start EC2 `i-0058f31de51e5c5c8`, if stopped, and wait for status checks.
-3. Verify the ECS agent is active and all eight `asset-avengers` services are healthy.
+3. If the project was deliberately paused, restore the saved ECS desired counts
+   in dependency order; see [recorded pause/resume](ecs/README.md#recorded-cost-pause).
+4. Verify the ECS agent is active and all eight services are healthy.
 
-The agent reconnects automatically. Do not run `scripts/start-project.sh` or
+The agent reconnects automatically, but services scaled to zero stay at zero. Do not run `scripts/start-project.sh` or
 Compose on this host; the startup helper is guarded to prevent duplicate services.
 Routine startup does not provision databases, run migrations, bootstrap Superset
 or load demo data. Do not recreate a database because an application is unhealthy.

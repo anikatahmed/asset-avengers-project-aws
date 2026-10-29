@@ -36,7 +36,7 @@ Task definitions pin image digests. Repositories have immutable tags and basic
 scan-on-push. Full dependency scans were also performed locally with Trivy
 0.76.1, since ECR basic scans do not establish application-dependency safety.
 Image snapshots record source checksums and uncommitted working-tree status;
-older snapshots are retained in `history/`. No Git commit or push was performed.
+older snapshots are retained in `history/`. The original images were built from uncommitted source snapshots before these deployment records were committed.
 
 Services use Docker bridge networking on the existing host. Public domains,
 CloudFront origins, host Nginx routing, S3 frontends and RDS databases remain in
@@ -120,3 +120,42 @@ Never start a legacy publisher or scheduler alongside its ECS replacement.
 When restarting the environment, make RDS available first, then start EC2 and
 verify the agent and eight ECS services. A host reboot interrupts all services;
 DNS and EIP do not need to change for a normal stop/start of this instance.
+
+
+## Recorded cost pause
+
+The application was deliberately paused on October 29, 2026. See
+[state/pause-state.json](state/pause-state.json) for verification time and original
+service counts. All eight services were scaled to zero before EC2 and RDS stopped.
+Retained storage, the Elastic IP, secrets, images and other stored resources can
+still incur charges. RDS reported automatic restart on November 5, 2026.
+
+This differs from a host reboot while desired counts remain one: **starting EC2
+alone will not restore services whose desired count is zero**.
+
+Resume in this order:
+
+1. Start RDS and wait until available.
+2. Start the existing EC2 instance, wait for status checks, and verify ECS agent connectivity.
+3. Restore Kafka's saved desired count and wait for its health.
+4. Restore auth, trading API, staff API and Superset counts, verifying each.
+5. Restore publisher, consumer and reporting-job counts, checking fresh ingestion.
+6. Verify the public endpoints and business reads.
+
+Each original count was one at this pause. Use the recorded values if that changes.
+The CLI pattern is:
+
+```bash
+aws ecs update-service --cluster asset-avengers \
+  --service asset-avengers-kafka --desired-count 1 \
+  --profile YOUR_PROFILE --region us-east-1
+aws ecs wait services-stable --cluster asset-avengers \
+  --services asset-avengers-kafka --profile YOUR_PROFILE --region us-east-1
+```
+
+Repeat for the other services in dependency order. Discover the available CLI
+profile rather than assuming another computer's profile name. Do not run the
+legacy Compose startup helper or database initialization scripts.
+
+The [general migration handbook](../../docs/local-to-aws-migration-guide.md#17-operate-pause-and-restart-the-environment)
+contains complete generic pause/resume commands and billing distinctions.

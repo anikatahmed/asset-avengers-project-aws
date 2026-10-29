@@ -15,6 +15,14 @@ To restart the environment, make RDS available first, start EC2, then verify
 all eight ECS services are healthy. The ECS agent is enabled on the host.
 **Do not run `scripts/start-project.sh` or Docker Compose on the ECS-managed host.**
 
+For a new team moving a local application to AWS, use the
+[CLI migration handbook](docs/local-to-aws-migration-guide.md), including service
+definitions, cost choices, database alternatives and Mermaid diagrams.
+
+After a deliberate cost pause, ECS service counts may be zero. Starting EC2
+alone does not restore them: follow the recorded
+[pause/resume procedure](deployment/ecs/README.md#recorded-cost-pause).
+
 Start with the [ECS deployment and operations guide](deployment/ecs/README.md).
 It covers image versions, task definitions, storage, secrets, verification,
 security follow-ups and rollback. No startup step resets databases or loads demo data.

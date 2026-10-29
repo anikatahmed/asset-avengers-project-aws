@@ -1,0 +1,34 @@
+{
+  "account": "314662805698",
+  "region": "us-east-1",
+  "cluster": "asset-avengers",
+  "requested_at": "2026-10-29T11:20:37.676137+00:00",
+  "ec2_instance": "i-0058f31de51e5c5c8",
+  "rds_instance": "asset-avengers-db",
+  "previous_desired_counts": {
+    "asset-avengers-kafka": 1,
+    "asset-avengers-auth": 1,
+    "asset-avengers-superset": 1,
+    "asset-avengers-trading-api": 1,
+    "asset-avengers-reporting-job": 1,
+    "asset-avengers-publisher": 1,
+    "asset-avengers-consumer": 1,
+    "asset-avengers-staff-api": 1
+  },
+  "phase": "stopped",
+  "retained_resources": [
+    "RDS data and backups",
+    "EBS volumes",
+    "Elastic IP",
+    "ECR images",
+    "S3 objects",
+    "CloudFront distributions",
+    "Secrets Manager secrets",
+    "CloudWatch logs"
+  ],
+  "ec2_status": "stopped",
+  "rds_status": "stopped",
+  "verified_at": "2026-10-29T11:30:21.301734+00:00",
+  "rds_automatic_restart_time": "2026-11-05T11:30:15.559000+00:00",
+  "resume_requires_restoring_service_counts": true
+}
