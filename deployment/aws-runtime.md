@@ -5,6 +5,9 @@ and rollback instructions is the [ECS operations guide](ecs/README.md).
 
 ## Normal startup
 
+Follow the [complete CLI startup runbook](../docs/start-asset-avengers-on-aws.md)
+for each command and verification step.
+
 1. Start `asset-avengers-db` in `us-east-1`, if stopped, and wait for `available`.
 2. Start EC2 `i-0058f31de51e5c5c8`, if stopped, and wait for status checks.
 3. If the project was deliberately paused, restore the saved ECS desired counts

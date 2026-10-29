@@ -3,12 +3,12 @@
   "task_definition": "arn:aws:ecs:us-east-1:314662805698:task-definition/asset-avengers-kafka:3",
   "legacy_container": "asset-avengers-internal-kafka-1",
   "legacy_restart_policy": "unless-stopped",
-  "phase": "paused",
+  "phase": "running",
   "project_tag": {
     "project": "asset-avengers"
   },
   "service_arn": "arn:aws:ecs:us-east-1:314662805698:service/asset-avengers/asset-avengers-kafka",
-  "task_arn": "arn:aws:ecs:us-east-1:314662805698:task/asset-avengers/a7820ccfde454b179043f056a0f75113",
+  "task_arn": "arn:aws:ecs:us-east-1:314662805698:task/asset-avengers/9352cc48701d45b79b9548d92923fed9",
   "previous_task_definition": "arn:aws:ecs:us-east-1:314662805698:task-definition/asset-avengers-kafka:2",
   "placement_constraints": [
     {
@@ -17,7 +17,9 @@
     }
   ],
   "last_running_health": "HEALTHY",
-  "desired_count": 0,
+  "desired_count": 1,
   "desired_count_before_pause": 1,
-  "paused_at": "2026-10-29T11:30:21.301734+00:00"
+  "paused_at": "2026-10-29T11:30:21.301734+00:00",
+  "health": "HEALTHY",
+  "resumed_at": "2026-10-29T13:12:03.811411+00:00"
 }

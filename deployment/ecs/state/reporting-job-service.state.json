@@ -3,12 +3,12 @@
   "task_definition": "arn:aws:ecs:us-east-1:314662805698:task-definition/asset-avengers-reporting-job:1",
   "legacy_container": "asset-avengers-internal-reporting-job-1",
   "legacy_restart_policy": "unless-stopped",
-  "phase": "paused",
+  "phase": "running",
   "project_tag": {
     "project": "asset-avengers"
   },
   "service_arn": "arn:aws:ecs:us-east-1:314662805698:service/asset-avengers/asset-avengers-reporting-job",
-  "task_arn": "arn:aws:ecs:us-east-1:314662805698:task/asset-avengers/cdbc04729d1b47df886de10b288d9192",
+  "task_arn": "arn:aws:ecs:us-east-1:314662805698:task/asset-avengers/0368e615bfa143abba4c83c30992f94a",
   "placement_constraints": [
     {
       "type": "memberOf",
@@ -16,7 +16,9 @@
     }
   ],
   "last_running_health": "HEALTHY",
-  "desired_count": 0,
+  "desired_count": 1,
   "desired_count_before_pause": 1,
-  "paused_at": "2026-10-29T11:30:21.301734+00:00"
+  "paused_at": "2026-10-29T11:30:21.301734+00:00",
+  "health": "HEALTHY",
+  "resumed_at": "2026-10-29T13:12:03.811411+00:00"
 }

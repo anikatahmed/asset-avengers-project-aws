@@ -3,12 +3,12 @@
   "legacy_container": "endgame_auth_server",
   "legacy_restart_policy": "unless-stopped",
   "port": 3000,
-  "phase": "paused",
+  "phase": "running",
   "project_tag": {
     "project": "asset-avengers"
   },
   "service_arn": "arn:aws:ecs:us-east-1:314662805698:service/asset-avengers/asset-avengers-auth",
-  "task_arn": "arn:aws:ecs:us-east-1:314662805698:task/asset-avengers/0c97d9e73dd64db3b03735599cd8eb24",
+  "task_arn": "arn:aws:ecs:us-east-1:314662805698:task/asset-avengers/75286f9a516a4e67b467fd32aeaecd93",
   "placement_constraints": [
     {
       "type": "memberOf",
@@ -16,7 +16,9 @@
     }
   ],
   "last_running_health": "HEALTHY",
-  "desired_count": 0,
+  "desired_count": 1,
   "desired_count_before_pause": 1,
-  "paused_at": "2026-10-29T11:30:21.301734+00:00"
+  "paused_at": "2026-10-29T11:30:21.301734+00:00",
+  "health": "HEALTHY",
+  "resumed_at": "2026-10-29T13:12:03.811411+00:00"
 }

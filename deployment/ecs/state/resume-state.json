@@ -1,0 +1,89 @@
+{
+  "verified_at": "2026-10-29T13:12:03.811411+00:00",
+  "account": "314662805698",
+  "region": "us-east-1",
+  "cluster": "asset-avengers",
+  "phase": "resumed",
+  "all_eight_services_healthy": true,
+  "services": [
+    {
+      "name": "asset-avengers-kafka",
+      "desired": 1,
+      "running": 1,
+      "pending": 0
+    },
+    {
+      "name": "asset-avengers-auth",
+      "desired": 1,
+      "running": 1,
+      "pending": 0
+    },
+    {
+      "name": "asset-avengers-superset",
+      "desired": 1,
+      "running": 1,
+      "pending": 0
+    },
+    {
+      "name": "asset-avengers-trading-api",
+      "desired": 1,
+      "running": 1,
+      "pending": 0
+    },
+    {
+      "name": "asset-avengers-reporting-job",
+      "desired": 1,
+      "running": 1,
+      "pending": 0
+    },
+    {
+      "name": "asset-avengers-publisher",
+      "desired": 1,
+      "running": 1,
+      "pending": 0
+    },
+    {
+      "name": "asset-avengers-consumer",
+      "desired": 1,
+      "running": 1,
+      "pending": 0
+    },
+    {
+      "name": "asset-avengers-staff-api",
+      "desired": 1,
+      "running": 1,
+      "pending": 0
+    }
+  ],
+  "public_endpoints": [
+    {
+      "url": "https://www.assetavengers.top/auth/profile",
+      "status": "401",
+      "curl_exit": 0
+    },
+    {
+      "url": "https://www.assetavengers.top/api/v1/me/accounts",
+      "status": "401",
+      "curl_exit": 0
+    },
+    {
+      "url": "https://admin.assetavengers.top/api/v1/analytics/status",
+      "status": "401",
+      "curl_exit": 0
+    },
+    {
+      "url": "https://analyst.assetavengers.top/api/v1/analytics/status",
+      "status": "401",
+      "curl_exit": 0
+    },
+    {
+      "url": "https://analytics.assetavengers.top/health",
+      "status": "200",
+      "curl_exit": 0
+    }
+  ],
+  "authenticated_login_tested": false,
+  "signup_tested": false,
+  "database_or_credential_changes": false,
+  "previous_pause_receipt": "pause-state.json"
+}

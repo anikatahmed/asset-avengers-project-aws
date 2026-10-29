@@ -3,12 +3,12 @@
   "task_definition": "arn:aws:ecs:us-east-1:314662805698:task-definition/asset-avengers-consumer:1",
   "legacy_container": "asset-avengers-internal-consumer-1",
   "legacy_restart_policy": "unless-stopped",
-  "phase": "paused",
+  "phase": "running",
   "project_tag": {
     "project": "asset-avengers"
   },
   "service_arn": "arn:aws:ecs:us-east-1:314662805698:service/asset-avengers/asset-avengers-consumer",
-  "task_arn": "arn:aws:ecs:us-east-1:314662805698:task/asset-avengers/12eb4a968bfd427ea028e1cc8f1aad02",
+  "task_arn": "arn:aws:ecs:us-east-1:314662805698:task/asset-avengers/c454d229601a4a86b53f8a61719ae10f",
   "placement_constraints": [
     {
       "type": "memberOf",
@@ -16,7 +16,9 @@
     }
   ],
   "last_running_health": "HEALTHY",
-  "desired_count": 0,
+  "desired_count": 1,
   "desired_count_before_pause": 1,
-  "paused_at": "2026-10-29T11:30:21.301734+00:00"
+  "paused_at": "2026-10-29T11:30:21.301734+00:00",
+  "health": "HEALTHY",
+  "resumed_at": "2026-10-29T13:12:03.811411+00:00"
 }

@@ -159,3 +159,15 @@ legacy Compose startup helper or database initialization scripts.
 
 The [general migration handbook](../../docs/local-to-aws-migration-guide.md#17-operate-pause-and-restart-the-environment)
 contains complete generic pause/resume commands and billing distinctions.
+
+## Resume after the recorded pause
+
+All eight service counts were restored to one and all tasks passed health checks
+on October 29, 2026. Protected public endpoints returned expected 401 responses;
+Superset health returned 200. See [resume receipt](state/resume-state.json). The
+pause receipt above is retained as historical evidence, not the current state.
+Authenticated login and signup were not exercised in this restart check.
+
+Use the [complete cloud startup runbook](../../docs/start-asset-avengers-on-aws.md)
+for account verification, RDS/EC2 startup, ECS counts, dependency health checks
+and public endpoint validation.
