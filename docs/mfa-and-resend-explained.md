@@ -107,8 +107,8 @@ sequenceDiagram
     end
     T-->>U: Time-based code
     U->>A: Challenge token and code
-    A->>D: Verify and consume proof; create session atomically
-    A-->>U: Access and refresh tokens; recovery codes on enrollment
+    A->>D: Verify proof and create session atomically
+    A-->>U: Access and refresh tokens plus recovery codes on enrollment
 ```
 
 ### Code handling and replay protection
