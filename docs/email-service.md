@@ -1,3 +1,5 @@
+> For the current ECS deployment and a combined team explanation, see [How MFA and Resend work](mfa-and-resend-explained.md). Local Compose startup examples below are not the production startup procedure.
+
 # Resend email service and password resets
 
 NestJS sends password-reset codes with the official `resend` Node SDK. The existing

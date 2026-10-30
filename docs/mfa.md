@@ -1,3 +1,5 @@
+> For the current ECS deployment and a combined team explanation, see [How MFA and Resend work](mfa-and-resend-explained.md). Local Compose startup examples below are not the production startup procedure.
+
 # Authenticator MFA: optional for clients, required for staff
 
 Client signup offers an unchecked **Use an authenticator app (MFA) to make my

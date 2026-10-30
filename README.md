@@ -72,6 +72,7 @@ references from Secrets Manager.
 
 ## Documentation
 
+- [How MFA and Resend work](docs/mfa-and-resend-explained.md)
 - [Trade Explorer: reusable datasets and no-SQL analyst filters](docs/admin-analytics/trade-explorer.md)
 - [Tests, coverage reports and tool responsibilities](docs/tests-coverage-and-tools.md)
 - [Start Asset Avengers on AWS](docs/start-asset-avengers-on-aws.md)
