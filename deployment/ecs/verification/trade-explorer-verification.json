@@ -1,0 +1,55 @@
+{
+  "verified_at": "2026-10-30T11:14:46.401220+00:00",
+  "account": "314662805698",
+  "region": "us-east-1",
+  "superset_version": "6.0.0",
+  "deployment_kind": "additive persistent metadata; existing ECS image unchanged",
+  "dataset": {
+    "id": 2,
+    "name": "asset_avengers_trade_explorer",
+    "columns": 35,
+    "one_row_per_published_fill": true
+  },
+  "dashboard": {
+    "id": 4,
+    "path": "/superset/dashboard/asset-trade-explorer/",
+    "chart_ids": [
+      10,
+      11
+    ]
+  },
+  "source_sha256": "103c9882abec37b235c4cc785dd361c51a9b0eb8cd3719ebd1bb49d4c9655752",
+  "tests": {
+    "pure_python_cases": 15,
+    "superset_postgresql_integration_cases": 5,
+    "transaction_rollback_verified": true,
+    "saved_chart_as_nonadmin_verified_locally": true,
+    "browser_typed_filters": {
+      "first_name": "Cameron",
+      "ticker": "AAPL",
+      "fixture_rows": 2,
+      "fixture_traded_amount_usd": 320,
+      "javascript_errors": 0,
+      "chart_requests_all_http_200": true
+    }
+  },
+  "aws": {
+    "nonadmin_dataset_api": 200,
+    "nonadmin_chart_api": 200,
+    "nonadmin_dashboard_html": 200,
+    "published_fills_at_setup": 21211,
+    "cameron_aapl_fills": 222,
+    "typed_numeric_filter_passed": true,
+    "quoted_value_filter_passed": true,
+    "reporting_connection_readonly": true,
+    "existing_datasets_charts_dashboards_unchanged": true,
+    "embedded_guest_permissions_unchanged": true,
+    "idempotent_setup_verified": true,
+    "metadata_backup_on_ec2": "/tmp/asset-avengers-before-trade-explorer-20261030T111030Z.json"
+  },
+  "limits": [
+    "Browser interaction tested against isolated local Superset 6 with generated fixtures",
+    "Production analyst-role checks used a framework test session; external SSO login was not repeated",
+    "No source financial records, PostgreSQL grants, credentials or metadata schema migrations changed"
+  ]
+}

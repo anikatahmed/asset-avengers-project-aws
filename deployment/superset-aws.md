@@ -45,3 +45,16 @@ requiring the correct owner credentials, a backup and reviewed scope. Do not use
 the old Compose initializer on the ECS-managed host or add its privileges to the
 ordinary web/reporting-reader task. See the [ECS operations guide](ecs/README.md)
 for current images, storage, secrets and rollback.
+
+## Reusable Trade Explorer dataset
+
+A separate Trade Explorer dataset/dashboard supports no-SQL analyst filtering.
+It joins published fills with permitted first/last names and current portfolio
+fields through the existing read-only reporting connection. Existing dashboard
+layouts, chart IDs and guest scopes are preserved. See the
+[analyst guide and verification procedure](../docs/admin-analytics/trade-explorer.md).
+
+Production setup uses the one-shot prepare_trade_explorer.py logic as additive
+metadata maintenance. It does not run bootstrap, Superset init or database
+migrations, and requires no service restart. Future image builds include the
+maintenance source; the live image digest is unchanged by this metadata update.

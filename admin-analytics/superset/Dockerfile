@@ -18,5 +18,7 @@ COPY endgame_sso.py /app/pythonpath/endgame_sso.py
 COPY superset_config.py /app/pythonpath/superset_config.py
 COPY bootstrap.py /app/bootstrap.py
 COPY dashboard_config.py /app/dashboard_config.py
+COPY trade_explorer.py /app/trade_explorer.py
+COPY prepare_trade_explorer.py /app/prepare_trade_explorer.py
 COPY init.sh /app/init-analytics.sh
 USER superset

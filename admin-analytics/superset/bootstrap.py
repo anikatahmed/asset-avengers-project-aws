@@ -191,6 +191,8 @@ def setup():
         # Update the allowlist on rerun while preserving authored chart layouts.
         embedded.allow_domain_list=os.environ['SUPERSET_EMBED_ORIGINS']
         dashboards.append((key,title,str(embedded.uuid)))
+    from trade_explorer import prepare_trade_explorer
+    prepare_trade_explorer(database, admin)
     db.session.commit()
     # Only this initialization job has registry-write credentials. Running Superset
     # itself receives a reporting login restricted to SELECT on approved views.

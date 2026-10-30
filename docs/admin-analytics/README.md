@@ -23,3 +23,5 @@ The repository-root Compose file starts the existing client/auth/trading system.
 The staff stack has its own Compose project, network and persistent volumes.
 
 See the [analyst dashboard user guide](analyst-dashboard-guide.md) for filtering, reporting dates, traded notional, and dashboard troubleshooting.
+
+For self-service chart creation and typed filters, see [Trade Explorer](trade-explorer.md).

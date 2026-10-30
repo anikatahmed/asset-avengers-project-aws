@@ -72,6 +72,7 @@ references from Secrets Manager.
 
 ## Documentation
 
+- [Trade Explorer: reusable datasets and no-SQL analyst filters](docs/admin-analytics/trade-explorer.md)
 - [Tests, coverage reports and tool responsibilities](docs/tests-coverage-and-tools.md)
 - [Start Asset Avengers on AWS](docs/start-asset-avengers-on-aws.md)
 - [How we moved Asset Avengers to AWS: architecture, problems and fixes](docs/asset-avengers-cloud-deployment-story.md)
